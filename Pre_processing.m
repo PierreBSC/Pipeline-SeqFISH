@@ -63,7 +63,7 @@ if perform_intensity_adjustment
     end
 end
 
-Concat_Image = mean(Concat_Image,3);
+
 
 
 %%Geting the image data back to the main memory

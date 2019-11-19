@@ -12,10 +12,11 @@ Parameters = Define_parameters();
 
 %Geting the matrix design and loading it
 
-[x , y] = uigetfile('*','Provide the path to the Matrix design file');
-Matrix_design_path = strcat(y,x);
-Matrix_design = readtable(Matrix_design_path,'delimiter','\t');
+%[x , y] = uigetfile('*','Provide the path to the Matrix design file');
+%Matrix_design_path = strcat(y,x);
+%Matrix_design = readtable(Matrix_design_path,'delimiter','\t');
 
+Matrix_design = Define_matrix_design();
 Parameters.Matrix_design = Matrix_design;
 Parameters.N_round = size(Matrix_design,1);
 Parameters.N_channel = size(Matrix_design,2);

@@ -25,6 +25,7 @@ RNA_data = RNA_data(:,:,best_stack);
 figure, imshow(imadjust(RNA_data,stretchlim(RNA_data,0.001)))
 hold on
 Raw_spots = Analysis_result.Spot_analysis_raw{R,Channel,P};
+scatter(Raw_spots(:,2),Raw_spots(:,1),'LineWidth',2)
 
 if Parameters.perform_spatial_statistic_test
     Filtered_spots = Analysis_result.Spot_analysis_filtered{R,Channel,P};

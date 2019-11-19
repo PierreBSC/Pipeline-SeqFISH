@@ -1,10 +1,11 @@
-function [] = Compute_spots_QC_plot(Analysis_result,Parameters,temporary_directory)
+function [] = Compute_spots_QC_plot(Analysis_result,Parameters,temporary_directory,noise_box)
 %Function creating the QC plots corresponding to the spot analysis 
 %   Compute multiple statistics of the spots using R package spatstat
 %   functions and graphical abilities...
 
 if nargin < 3
     temporary_directory = '~/seqFISH_Temporary_file/';
+    noise_box = [3 3]; %What is the size of the patch used to compute local std ? Here corresponds to a 3+1+3 * 3+1+3 box...
 end
 
 %If the temporary file does not exist : create it !
@@ -15,12 +16,22 @@ end
 %Remove all files from the directory
 delete(strcat(temporary_directory,'/*'))
 
+%%We need to know what is the size of the pictures : just load one
+%%picture...
+Round_directory = strcat(Parameters.Image_directory,"/Round_1/");
+Round_directory = char(Round_directory);
+Position_directory = strcat(Round_directory,"/Position_1/");
+Position_directory = char(Position_directory);
+Example_data=LoadImage(Position_directory,true,1); 
+X_size = size(Example_data,1);
+Y_size = size(Example_data,2);
+
+
 %Concatenating the spot information across all Rounds, Position and
 %Channels
 %Information collected : spot localisation, spot intensity, filtered or not
+List_spots = [];
 
-Concatenated_spots = [];
-Estimated_noise_matrix = zeros(size(Analysis_result.Spot_analysis_raw));
 
 
 for R = 1:Parameters.N_round
@@ -33,7 +44,7 @@ for R = 1:Parameters.N_round
     %Defining the Round directory
     Round_directory = strcat(Parameters.Image_directory,'/Round_',string(R),'/');
     Round_directory = char(Round_directory);
-    List_spots = [];
+    
     for P = 1:Parameters.N_position
     
         List_spots_temp = [];
@@ -55,18 +66,28 @@ for R = 1:Parameters.N_round
                     Is_kept = repmat(0,size(X_raw,1),1);
                 end
 
-                %Computing mean intensity of the spots as well as
-                %estimated background noise 
+                %Computing intensity of the spots as well as
+                %estimated local background noise f
                 Channel_data=LoadImage(Position_directory,true,k); 
                 Channel_data = Pre_processing(Channel_data,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,Parameters.tolerance); 
+
+                Estimated_intensity = Channel_data(sub2ind(size(Channel_data),round(X_raw(:,1)),round(X_raw(:,2)),round(X_raw(:,3))));
+                Estimated_noise = [];
                 
-                Estimated_noise = std(Channel_data(:));
-                Estimated_noise_matrix(R,k,P) = Estimated_noise;
-                Smoothed_image = imgaussfilt3(Channel_data,Parameters.sigma_small);
-                Estimated_intensity = Smoothed_image(sub2ind(size(Smoothed_image),round(X_raw(:,1)),round(X_raw(:,2)),round(X_raw(:,3))));
+                for i=1:size(X_raw,1)
+                    Point_center = [round(X_raw(i,1)) round(X_raw(i,2)) round(X_raw(i,3))];
+                    X_min = max(1,Point_center(1)-noise_box(1));
+                    Y_min = max(1,Point_center(2)-noise_box(2));
+                    X_max = min(X_size,Point_center(1)+noise_box(1));
+                    Y_max = min(Y_size,Point_center(2)+noise_box(2));
+                    [List_sub_x,List_sub_y] = meshgrid(X_min:X_max,Y_min:Y_max);
+                    Channel_data_temp = Channel_data(:,:,round(X_raw(i,3)));
+                    Local_values = Channel_data_temp(sub2ind(size(Channel_data_temp),List_sub_x(:),List_sub_y(:)));
+                    Estimated_noise =[Estimated_noise std(Local_values)];
+                end
                  
                 %Final table : position (X,Y,Z),
-                X = [X_raw Estimated_intensity Is_kept repmat(R,size(X_raw,1),1) repmat(P,size(X_raw,1),1) repmat(k,size(X_raw,1),1)];
+                X = [X_raw Estimated_intensity Is_kept Estimated_noise.' repmat(R,size(X_raw,1),1) repmat(P,size(X_raw,1),1) repmat(k,size(X_raw,1),1)];
                 List_spots = [List_spots; X];
 
             end
@@ -74,22 +95,7 @@ for R = 1:Parameters.N_round
         end
     end
 end
-
-%%Changing the format of the Noise matrix so it can be loaded by R
-
-if size(Estimated_noise_matrix,3)==1
-[x_index y_index z_index] = ind2sub([size(Estimated_noise_matrix) 1],1:size(Estimated_noise_matrix(:),1));
-end
-
-if size(Estimated_noise_matrix,3)>1
-[x_index y_index z_index] = ind2sub(size(Estimated_noise_matrix),1:size(Estimated_noise_matrix(:),1));
-end
-
-Estimated_noise_table = [Estimated_noise_matrix(:) , x_index.' , y_index.', z_index.'];
-%Exporting the final table in the temporary directory
-
 writetable(array2table(List_spots),strcat(temporary_directory,'/Concatenated_spot_information.txt'),'Delimiter','\t');
-writetable(array2table(Estimated_noise_table),strcat(temporary_directory,'/Noise_value.txt'),'Delimiter','\t');
 
 %Exporting basic information about the experiment settings (number of
 %rounds, positions and channels)

@@ -38,11 +38,9 @@ string.to.colors = function (string, colors = NULL) {
 
 Path = 'seqFISH_Temporary_file'
 Data_table = read.delim(paste(Path,"Concatenated_spot_information.txt",sep = "/"))
-colnames(Data_table) = c("Position_X","Position_Y","Position_Z",'Intensity','Passed_Filtering','Round','Position','Channel')
+colnames(Data_table) = c("Position_X","Position_Y","Position_Z",'Intensity','Passed_Filtering','Noise','Round','Position','Channel')
 Data_table$Individual_gene = paste(Data_table$Round,Data_table$Channel,sep = "_")
 
-Noise_matrix = read.delim(paste(Path,"Noise_value.txt",sep = "/"))
-colnames(Noise_matrix) = c("Noise","Round","Channel","Position")
 
 General_information = read.delim(paste(Path,"General_experiment_information.txt",sep = "/"))
 
