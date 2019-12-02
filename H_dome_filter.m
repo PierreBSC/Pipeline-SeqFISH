@@ -155,7 +155,7 @@ for k=1:l
     spot_determinant = cell2mat(spot_determinant);
     
     %Computing the maximal determinant value 
-    det_threshold = ((sigma_max^2)^3)/(S^3);
+    det_threshold = ((sigma_max^2 + sigma_small^2)^3)/(S^3);
     
      %Filtering the spots based on the different values  
     Selected_spots = spot_determinant<det_threshold & count_cluster(:,2)>5;
