@@ -28,6 +28,7 @@ Image data formatting and organization
 -----------------------------------------------
 
 Before running SAMAEL, the data need to be organized in a precise manner to allow fully automated data processing. First the data are split in different folders corresponding to the different **imaging rounds**. In each round folder, data are again split into different folder corresponding to the different **imaging position**. In each of these position folder, **.tiff** files are stored, with each **.tiff** file corresponding to all the z-stacks of one imaging channel. In the case of large datasets, we recommend to use **Fiji** macro.
+
 <img src="Screenshots/File_organisation.jpg" alt="drawing" width="400"/>
 
 **Warnings** : the directories names need to be correctly written. All round directories have to be named 'Round_k' and position directories 'Position_k'.
@@ -48,7 +49,7 @@ Both objects are created using the Create_experiment function :
 ```
 Launching this function will initiate a simple graphical interface with five successive windows, one per type of parameters :
 
-1. First provide the **location of the image directory**. <img src="/Users/Pierre/Desktop/seqFISH_manual/Choice_directory.tiff" alt="drawing" width="350">
+1. First provide the **location of the image directory**. <img src="Screenshots/Choice_directory.tiff" alt="drawing" width="350">
 
 
 2. Then use the second window to define the **general and spot detection parameters**.  First set up basic parameters including : the number of positions, the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. In all cases, be sure to adjust for the number of positions : by default only the first position will be processed
@@ -59,7 +60,7 @@ Launching this function will initiate a simple graphical interface with five suc
 
 4. Lastly, the fourth and fifth windows allow you to provide the experimental design to the pipeline. First set the number of rounds and channels. The fifth window will then open and contains a matrix where the rows correspond to the rounds and the columns the channels. By default all channels/rounds combinations will be considered as generating smFISH-like data and have a **RNA** label. To modify the kind of data, replace the RNA label by the **DAPI** or **IF** label for DAPI and Immunofluorescence data respectively. If a channel is not used at a given round put any other character string of your choice. 
 
-<img src="/Users/Pierre/Desktop/seqFISH_manual/Matrix_design.tiff" alt="drawing" width="350">
+<img src="Screenshots/Matrix_design.tiff" alt="drawing" width="350">
 
 Here for instance the first channel will first considered as DAPI channel, then not used for the second round and finally considered as an IF channel while all other channels are first considered as RNA staining on the two first rounds before being processed as IF channels on the last round.
 
@@ -83,7 +84,7 @@ Analysis_result = Spot_visualisation(Analysis_result,Parameters,2,1,4);
 This command will project the position of the identified spots on a mean z-stack intensity projection allowing to evaluate the sensitivity and specificity of the spot detection method.
 In the example given, the spots and image come from position 2, round 1 and channel 4, as specified in the function.
 
-<img src="/Users/Pierre/Desktop/seqFISH_manual/Example_good_spot_detection.tiff" alt="drawing" width="300"> <img src="/Users/Pierre/Desktop/seqFISH_manual/Example_bad_spot_detection.tiff" alt="drawing" width="263">
+<img src="Screenshots/Example_good_spot_detection.tiff" alt="drawing" width="300"> <img src="/Screenshots/Example_bad_spot_detection.tiff" alt="drawing" width="263">
 
 When using this function, spots that passed  the spatial filtering step are represented as red filled dots while those which did not pass it appear as blue circles.
 
