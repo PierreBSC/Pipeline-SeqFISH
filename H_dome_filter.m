@@ -6,11 +6,11 @@ function [spot_list] = H_dome_filter(Processed_Image,use_GPU,sigma_small,sigma_m
 
 if nargin < 2
     use_GPU = true;
-    sigma_small = 2; %% Size of the LOG filter, in pixel 
+    sigma_small = 1; %% Size of the LOG filter, in pixel 
     sigma_max = 5; %% Maximum size of the object in pixel 
-    h_meta_parameter = 0.5; %Don't touch it !!!
-    S = 5; %Power of the H-dome matrix, has to be bigger than 3 at least..
-    N_points_sample = 20000; %% ~ Number of expected spots * 20
+    h_meta_parameter = 1; %Don't touch it too much...
+    S = 10; %Power of the H-dome matrix, has to be bigger than 3 at least..
+    N_points_sample = 20000; %% ~ Number of expected spots * 30
     disp('All needed parameters have not been specified. Running using default parameters')
 end
 
@@ -50,24 +50,24 @@ end
 
 disp('LOG filter applied')
 
-clear Processed_Image 
+%clear Processed_Image 
 
-%%Rescaling the image 
+%%Rescaling the image and 
 filteredImg = - filteredImg;
+filteredImg(filteredImg<0) = 0;
 
 for k = 1:l
-    temp_data = filteredImg(:,:,:,k);
-    filteredImg(:,:,:,k) = filteredImg(:,:,:,k) - min(temp_data(:));
+    temp_data = gather(filteredImg(:,:,:,k));
+    filteredImg(:,:,:,k) = imadjustn(temp_data,stretchlim(temp_data(:)));
 end
 
 %%Computing the h-dome value for each channel
 h_parameter = zeros(l,1);
 
 for k = 1:l
-    temp_data = filteredImg(:,:,:,k);
-    max_signal = gather(max(temp_data(:)));
-    mean_signal = gather(mean(temp_data(:)));
-    h_parameter(k,1) = (max_signal-mean_signal)*h_meta_parameter;
+    temp_data = filteredImg(:,:,:,k);    
+    noise = std(gather(temp_data(:)));
+    h_parameter(k,1) = (1-noise)*h_meta_parameter;    
 end
 
 %%H-dome transformation
@@ -83,7 +83,7 @@ end
 
 for k=1:l
     for z =1:numstack   
-        H_dome(:,:,z,k) =  imhmax(filteredImg(:,:,z,k),h_parameter(k),4);
+        H_dome(:,:,z,k) =  imreconstruct(filteredImg(:,:,z,k)-h_parameter(k),filteredImg(:,:,z,k),4);
         H_dome(:,:,z,k) = filteredImg(:,:,z,k) - H_dome(:,:,z,k);
     end
 end 
@@ -142,24 +142,23 @@ disp('Starting Mean shift clustering')
 for k=1:l
     
     %%Clustering by itself
-    %[clustCent,data2cluster] = Mean_shift(Sampling_result{k},sigma_small*2,30);
-    [Final_clusters,Final_clustering] = Mean_shift(Sampling_result{k},sigma_small*3,15);
-
+    [Final_clusters,Final_clustering] = Mean_shift(Sampling_result{k},sigma_small*3,20);
+    size(Final_clusters)
     
     count_cluster = tabulate(Final_clustering);
         
-    grouped_spots = splitapply( @(x){x}, Sampling_result{k}, Final_clustering.');
+    grouped_spots = splitapply( @(x){x}, Sampling_result{k}, (Final_clustering));
     
     %%Computing the determinant of the spatial variance for each cluster
-    spot_determinant = cellfun(@(x) {det(cov(x))},grouped_spots);
+    spot_determinant = cellfun(@(x) {det(cov(x(:,1:2)))},grouped_spots);
     spot_determinant = cell2mat(spot_determinant);
     
     %Computing the maximal determinant value 
-    det_threshold = ((sigma_max^2 + sigma_small^2)^3)/(S^3);
+    det_threshold = ((sigma_max^2)^2);
     
      %Filtering the spots based on the different values  
     Selected_spots = spot_determinant<det_threshold & count_cluster(:,2)>5;
-    
+
     spot_list{k} = Final_clusters(Selected_spots,:);
 
 end

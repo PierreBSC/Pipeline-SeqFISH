@@ -1,7 +1,7 @@
 function Matrix_design = Define_matrix_design()
 
 prompt = {  'Number of rounds',
-            'Number of positions'
+            'Number of channels'
 };
 dlgtitle = 'Experiment design information';
 dims = [1 35];
@@ -28,7 +28,7 @@ if ~ isempty(answer)
     prompt = 1:N_Rounds*N_Channels;
     prompt = num2cell(prompt);
     prompt = cellfun(@num2str,prompt,'UniformOutput',false);
-    Matrix_design=inputdlgcol(prompt,'Essai',[1,34],Table_base,AddOpts,N_Channels);
+    Matrix_design=inputdlgcol(prompt,'Provide Matrix Design',[1,34],Table_base,AddOpts,N_Channels);
     Matrix_design = reshape(Matrix_design,N_Rounds,N_Channels);
     Matrix_design =  cell2table(Matrix_design);
     

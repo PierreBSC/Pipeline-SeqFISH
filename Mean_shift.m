@@ -1,11 +1,13 @@
-function [Final_clusters,Final_clustering] = Mean_shift_2(X,bandwidth,max_iter)
+function [Final_cluster_positions,Cluster_assignement] = Mean_shift(X,bandwidth,max_iter)
 %Mean shift clustering function 
 %Mean shift clustering based on Gaussian kernel computed with Matrix
 %%Dscription of the global approach : A review of mean-shif algorithms for
 %%clustering
 
+X(:,3) = 1;
 [Seed_values Seed_correspondance Attributed_seed]= unique(X,'row');
 N_seeds = size(Seed_values,1);
+
 
 %%We need to compute a Kd-tree to increase computation speed
 %We do it with all the spots and not only the seeds
@@ -14,9 +16,10 @@ KD_Tree = KDTreeSearcher(X);
 
 %What is the max distance that will be take into account ? (only true for
 %gaussian kernel)
-max_distance = bandwidth*sqrt(-log(1e-3));
-%What is the minimal distance so that two modes are distinct ?
-epsilon_distance = bandwidth/2;
+max_distance = bandwidth*sqrt(-log(1e-4));
+
+%What is the minimal mean shift distance to stop  the algorithm ?
+epsilon_distance = 1 ; %1 pixel
 
 List_modes = cell(size(Seed_values,1),1);
 
@@ -61,13 +64,19 @@ for k=1:size(List_modes,1)
     List_modes_table = [List_modes_table ; List_modes{k}];
 end
 
+%We are working at the pixel level : removing overlap 
+
+List_modes_table_pixel = round(List_modes_table);
+List_modes_table_pixel = unique(List_modes_table_pixel,'row');
+
 %%Now we need to aggregate the modes that are too close 
+%Minimal distance : one pixel (
 %%We can create some adjacency matrix and then convert it into a matrix
 %The different connected components are then extracted
 
 %First : range search
-Adj_list = rangesearch(List_modes_table,List_modes_table,epsilon_distance);
-Adj_list = cellfun(@(x) double(ismember(1:size(List_modes_table,1),x(:))),Adj_list,'UniformOutput',false);
+Adj_list = rangesearch(List_modes_table_pixel,List_modes_table_pixel,1.9);
+Adj_list = cellfun(@(x) double(ismember(1:size(List_modes_table_pixel,1),x(:))),Adj_list,'UniformOutput',false);
 Adj_list =cell2mat(Adj_list);
 
 %Second : identification of the connected components
@@ -76,12 +85,16 @@ Final_seeds_clustering = conncomp(espilon_graph);
 
 %Third : geting the centroid of the meta clusters
 
-Final_clusters = splitapply(@(x) median(x,1),List_modes_table,Final_seeds_clustering.');
+Final_cluster_positions = splitapply(@(x) mean(x,1),List_modes_table_pixel,Final_seeds_clustering.');
 
 %%Last steps : getting the clusters for all the points 
 
-Final_clustering = Final_seeds_clustering(Attributed_seed);
+KD_tree_centroid = ExhaustiveSearcher(Final_cluster_positions);
+Cluster_assignement = knnsearch(KD_tree_centroid,X,'K',1);
+[Cluster_assignement ID] = findgroups(Cluster_assignement);
+
+Final_cluster_positions = Final_cluster_positions(ID,:);
+
+
 
 end
-
-

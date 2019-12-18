@@ -1,18 +1,6 @@
-function [Analysis_result] = Spot_based_segmentation(Analysis_result,Parameters,Perform_on_filtered_spots,Threshold_overlap,Bandwidth_parameter)
+function [Analysis_result,Parameters] = Spot_based_segmentation(Analysis_result,Parameters)
 %Generic function that performs cell segmentation using spots
 %Requires an Analysis_result and Parameters objects to already exist
-
-if nargin < 4
-    Threshold_overlap = 0.3;
-    Bandwidth_parameter = 15;
-end
-
-%By default : always perform the analysis on filtered spots, increase the
-%robustness !
-
-if nargin < 3
-    Perform_on_filtered_spots = true;
-end
 
 %Checking that the spots detection stage has already been performed
 
@@ -21,27 +9,29 @@ if ~isfield(Analysis_result,'Spot_analysis_raw')
     return
 end
 
-if Perform_on_filtered_spots
+if Parameters.Perform_on_filtered_spots
     if ~isfield(Analysis_result,'Spot_analysis_filtered')
-        Perform_on_filtered_spots =false;
+        Parameters.Perform_on_filtered_spots =false;
     end
 end
 
 %Now we can perform cell segmentation by itself
 %Creating a new field in the Analysis_result object
 
-
 Analysis_result.Spot_based_segmentation = cell(Parameters.N_position,1);
 
 %Extracting spot array
 
-if Perform_on_filtered_spots
+if Parameters.Perform_on_filtered_spots
     Spot_array = Analysis_result.Spot_analysis_filtered;
 end
 
-if ~Perform_on_filtered_spots
+if ~Parameters.Perform_on_filtered_spots
     Spot_array = Analysis_result.Spot_analysis_raw;
 end
+
+%%Asking which channel to use for segmentation
+Segmentation_design = Select_segmentation_genes(Parameters);
 
 %%We need to know what is the size of the pictures : just load one
 %%picture...
@@ -69,17 +59,17 @@ for R = 1:Parameters.N_round
     end
     
     %What are the RNA channels for this round ?
-    RNA_channel = find(Parameters.Matrix_design{R,:}=="RNA");
+    Segmentation_channels = find(Parameters.Matrix_design{R,:}=="RNA" & Segmentation_design{R,:}=="Use");
 
     for P = 1:Parameters.N_position
     
     disp(strcat("Round ",num2str(R)," Position ",num2str(P))) 
     
-        for k=1:size(RNA_channel,2)
+        for k=1:size(Segmentation_channels,2)
             
-            temp_spots = Spot_array{R,RNA_channel(1,k),P};
+            temp_spots = Spot_array{R,Segmentation_channels(1,k),P};
             %%Key step :Computing NJW clustering
-            temp_clustering = Diffusion_map(temp_spots);
+            temp_clustering = Diffusion_map(temp_spots,Parameters.N_neighbors,Parameters.N_comp,Parameters.T);
             
             
             %Cleaning of the different spots  clusters 
@@ -98,6 +88,8 @@ for R = 1:Parameters.N_round
             
             for i=1:size(list_cluster,1)
                 
+                %Checking for the density of the cluster using a simple
+                %Homogenous Poisson Point Process model 
                 if sum(temp_clustering==i)>2
                     [~,volume] = convhull(temp_spots(temp_clustering==i,1:2));
                     Poisson_distribution = makedist('Poisson','lambda',Lambda*volume); 
@@ -125,7 +117,7 @@ for R = 1:Parameters.N_round
             Final_table = [temp_spots_filtered temp_clustering_filtered];
             
             
-           Spot_clusters{R,RNA_channel(1,k),P} = Final_table;       
+           Spot_clusters{R,Segmentation_channels(1,k),P} = Final_table;       
            
         end
     end
@@ -150,15 +142,15 @@ for R = 1:Parameters.N_round
     end
     
     %What are the RNA channels for this round ?
-    RNA_channel = find(Parameters.Matrix_design{R,:}=="RNA");
+    Segmentation_channels = find(Parameters.Matrix_design{R,:}=="RNA");
 
     for P = 1:Parameters.N_position
     
     disp(strcat("Round ",num2str(R)," Position ",num2str(P))) 
     
-        for k=1:size(RNA_channel,2)
+        for k=1:size(Segmentation_channels,2)
             
-            temp_spots = Spot_clusters{R,RNA_channel(1,k),P};
+            temp_spots = Spot_clusters{R,Segmentation_channels(1,k),P};
             
             if size(temp_spots,1)>0
              %Re-assigning values of the clusters
@@ -166,8 +158,8 @@ for R = 1:Parameters.N_round
             temp_spots(:,4) = discretize(temp_spots(:,4),size(unique(temp_spots(:,4)),1));
             temp_density = splitapply(@(x) {histcounts2(x(:,2),x(:,1),linspace(1,X_size,50),linspace(1,Y_size,50))./size(x,1)},temp_spots(:,1:2),temp_spots(:,4));
             
-            Spot_clusters{R,RNA_channel(1,k),P} = temp_spots;
-            Cluster_density_map{R,RNA_channel(1,k),P} = temp_density;
+            Spot_clusters{R,Segmentation_channels(1,k),P} = temp_spots;
+            Cluster_density_map{R,Segmentation_channels(1,k),P} = temp_density;
 
             end
             
@@ -214,7 +206,7 @@ for P = 1:Parameters.N_position
         end
     end
     
-    Aggregation_graph = graph(Similarity_matrix > Threshold_overlap); %
+    Aggregation_graph = graph(Similarity_matrix > Parameters.Graph_Threshold_overlap); %
 	Aggregation_graph = rmedge(Aggregation_graph, 1:numnodes(Aggregation_graph), 1:numnodes(Aggregation_graph)); %Removing self loops
     Meta_clustering = conncomp(Aggregation_graph); %Detecting connected components 
     N_meta_clusters = size(unique(Meta_clustering),2);
@@ -237,10 +229,10 @@ for P = 1:Parameters.N_position
         %Computing boundary box
         [boundary_x,boundary_y] = boundingbox(polyshape(temp_point_aggregate(:,1:2)));
         %Extending it
-        boundary_x(1) = boundary_x(1) - 2*Bandwidth_parameter;
-        boundary_y(1) = boundary_y(1) - 2*Bandwidth_parameter;
-        boundary_x(2) = boundary_x(2) + 2*Bandwidth_parameter;
-        boundary_y(2) = boundary_y(2) + 2*Bandwidth_parameter;
+        boundary_x(1) = boundary_x(1) - 2*Parameters.Bandwidth_parameter;
+        boundary_y(1) = boundary_y(1) - 2*Parameters.Bandwidth_parameter;
+        boundary_x(2) = boundary_x(2) + 2*Parameters.Bandwidth_parameter;
+        boundary_y(2) = boundary_y(2) + 2*Parameters.Bandwidth_parameter;
         %Checking it is not outside of the image boundary
         boundary_x(1) = max(0,boundary_x(1));
         boundary_y(1) = max(0,boundary_y(1));
@@ -250,7 +242,7 @@ for P = 1:Parameters.N_position
         
         %Computing local density using kernel estimator
         [grid_x, grid_y] = meshgrid(round(boundary_x(1)):round(boundary_x(2)),round(boundary_y(1)):round(boundary_y(2)));
-        estimated_density = ksdensity(temp_point_aggregate(:,1:2),[grid_x(:),grid_y(:)],'Bandwidth',Bandwidth_parameter);
+        estimated_density = ksdensity(temp_point_aggregate(:,1:2),[grid_x(:),grid_y(:)],'Bandwidth',Parameters.Bandwidth_parameter);
         estimated_density = reshape(estimated_density,size(grid_y));
         
         %Binarization of the density 
@@ -269,13 +261,15 @@ for P = 1:Parameters.N_position
         Meta_clusters_points = [Meta_clusters_points; Conn_components_points];
         
         Final_boundary = Conn_components_points(boundary(Conn_components_points(:,1:2)),:);
-        plot(Final_boundary(:,2),Final_boundary(:,1), 'LineWidth',5)
     end
         
     Analysis_result.Spot_based_segmentation{P,1} = Meta_clusters_points;
     
 end
        
+for P=1:Parameters.N_position
+        Analysis_result.Spot_based_segmentation{P,1} = Remove_segmentation_overlap(Analysis_result.Spot_based_segmentation{P,1},X_size,Y_size);
+end
 
 disp("Spot based segmentation finished !")
 

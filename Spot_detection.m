@@ -42,9 +42,25 @@ for R = 1:Parameters.N_round
     %Cleaning of the data
     RNA_data = Pre_processing(RNA_data,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,Parameters.tolerance); 
     
-    %Detection through the H-dome method
-    Unfiltered_spots = H_dome_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.h_meta_parameter,Parameters.S,Parameters.N_points_sample);  
-    %Unfiltered_spots = Top_hat_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.N_points_sample);  
+    %Detection through the Multiscale or H-dome method
+    
+    if Parameters.Spot_detection_method == 'Multiscale'
+        disp('Performing spot detection using Multiscale method')
+        Unfiltered_spots = Multiscale_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.N_scales,Parameters.T_offset);  
+   end
+
+    
+    if Parameters.Spot_detection_method == 'H-dome'
+        disp('Performing spot detection using HD method')
+        Unfiltered_spots = H_dome_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.h_meta_parameter,Parameters.S,Parameters.N_points_sample);
+    end
+    
+    if Parameters.Spot_detection_method ~= 'H-dome' & Parameters.Spot_detection_method ~= 'Multiscale'
+        disp('No known spot detection method provided. Using Multiscale method  by default.')
+        Unfiltered_spots = Multiscale_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.N_scales,Parameters.T_offset);  
+   end
+
+
 
     Analysis_result.Spot_analysis_raw(R,RNA_channel,P) = Unfiltered_spots; %Exporting the raw spots
            

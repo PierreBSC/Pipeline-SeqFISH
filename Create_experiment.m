@@ -6,15 +6,15 @@ function [Analysis_result,Parameters] = Create_experiment()
 Image_directory = uigetdir('title','Provide the path to the Image Folder');
 
 
-%Geting the parameter through a user Interface
-Parameters = Define_parameters();
+%Geting the parameter for spot detection through a user Interface
+Parameters = Define_parameters_spot_detection();
+
+%Adding parameters for cell segmentation
+
+Parameters = Define_parameters_cell_segmentation(Parameters);
 
 
 %Geting the matrix design and loading it
-
-%[x , y] = uigetfile('*','Provide the path to the Matrix design file');
-%Matrix_design_path = strcat(y,x);
-%Matrix_design = readtable(Matrix_design_path,'delimiter','\t');
 
 Matrix_design = Define_matrix_design();
 Parameters.Matrix_design = Matrix_design;

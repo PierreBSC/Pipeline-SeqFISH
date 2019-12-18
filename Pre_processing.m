@@ -74,6 +74,7 @@ if use_GPU
     end
 end
 
+
 Processed_image=single(Concat_Image);
 disp("Pre-processing finished !");
 
