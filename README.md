@@ -28,7 +28,7 @@ Image data formatting and organization
 -----------------------------------------------
 
 Before running SAMAEL, the data need to be organized in a precise manner to allow fully automated data processing. First the data are split in different folders corresponding to the different **imaging rounds**. In each round folder, data are again split into different folder corresponding to the different **imaging position**. In each of these position folder, **.tiff** files are stored, with each **.tiff** file corresponding to all the z-stacks of one imaging channel. In the case of large datasets, we recommend to use **Fiji** macro.
-<img src="/Users/Pierre/Desktop/seqFISH_manual/File_organisation.jpg" alt="drawing" width="400"/>
+<img src="Screenshots/File_organisation.jpg" alt="drawing" width="400"/>
 
 **Warnings** : the directories names need to be correctly written. All round directories have to be named 'Round_k' and position directories 'Position_k'.
 
