@@ -90,7 +90,7 @@ When using this function, spots that passed  the spatial filtering step are repr
 If the analysis did not perform well you can simply change the parameters by accessing the different fields of the **Parameters** object. For instance if you want to increase the treshold offset used in the Multiscale algorithm to 0.1  and relaunch the analysis simply write :
 
 ```matlab
-Parameters.T_offset= 20000;
+Parameters.T_offset= 0.1;
 Analysis_result = Spot_detection(Analysis_result,Parameters);
 ```
 
