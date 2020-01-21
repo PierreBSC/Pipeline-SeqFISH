@@ -1,4 +1,4 @@
-function [Analysis_result] = Compute_global_stitching(Analysis_result,Parameters,Channel,R)
+function [Analysis_result] = Compute_global_stitching(Analysis_result,Parameters,R,Channel)
 %General function to compute the stitching vector for all positions 
 %This function uses a phase correlation based method to efficiently compute
 %each individual vector and then use a graph based approach to compute the
@@ -43,18 +43,22 @@ for i = 1:Parameters.N_position
             Ref_Image = LoadImage(Position_directory_i,true,Channel); 
             Ref_Image = Pre_processing(Ref_Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,0.001); 
             Ref_Image = mean(Ref_Image,3);
+            Ref_Image = imadjust(imgaussfilt(Ref_Image,2));
 
             
             Moving_Image = LoadImage(Position_directory_j,true,Channel); 
             Moving_Image = Pre_processing(Moving_Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,0.001); 
             Moving_Image = mean(Moving_Image,3);
+            Moving_Image = imadjust(imgaussfilt(Moving_Image,2));
             
             [Stitching_transformation,Intensity_peak] = get_stitching_vector(Ref_Image,Moving_Image,'Inversed');
+
             M_SNR(i,j) = Intensity_peak;
             Stitching_transformation = Stitching_transformation.T;
             M_x(i,j) = Stitching_transformation(3,1);
             M_y(i,j) = Stitching_transformation(3,2);
-
+            
+            %Cross_cor = normxcorr2((Ref_Image),(Moving_Image));
         end
     end
 end

@@ -51,7 +51,7 @@ print(2)
 ##Performing the statistical analysis : spatial scan test from Kulldorf's paper (1997)
 
 
-analysis_granularity = 30;
+analysis_granularity = 100;
 
 
 LR_table = matrix(0,nrow = analysis_granularity,ncol = n_channel)
@@ -67,7 +67,7 @@ for (k in 1:n_channel) {
   intensity_range = quantile(intensity,probs = seq(from = 0,to = 0.99,length.out =analysis_granularity ))
 
   position = position_list[[k]]
-  position_base = ppp(position[,1],position[,2],window = owin(c(0,2000),c(0,2000)))
+  position_base = ppp(position[,1],position[,2],window = owin(c(min(position[,1]),max(position[,1])),c(min(position[,2]),max(position[,]))))
   #position_base = ppp(position[,1],position[,2])
 
   if (nrow(position)>15) {
@@ -80,19 +80,25 @@ for (k in 1:n_channel) {
 
     if (length(position$X[intensity>=intensity_range[i]])>1) {
 
-        X <- spatstat::ppp(position$X[intensity>=intensity_range[i]], position$Y[intensity>=intensity_range[i]], window=spatstat::owin(c(0,2000),c(0,2000)))
+        X <- spatstat::ppp(position$X[intensity>=intensity_range[i]], position$Y[intensity>=intensity_range[i]], window=spatstat::owin(c(min(position[,1]),max(position[,1])),c(min(position[,2]),max(position[,]))))
+        
+        CE_index = clarkevans(X,correction = "Donnelly")
+        LR_table[i,k] = CE_index
 
-        test = spatstat::scan.test(X,r = c(50,100,150),alternative = "greater",verbose = F ,method = "poisson",baseline = base_density,nsim = 2)
+        #test = spatstat::scan.test(X,r = c(100),alternative = "greater",verbose = F ,method = "poisson",baseline = base_density,nsim = 2)
+        #LR_table[i,k] = -test$statistic
 
-        LR_table[i,k] = test$statistic
+        hopskel = spatstat::hopskel(X)
+        LR_table[i,k] = hopskel
+
+        
+        
     }
     if (length(position$X[intensity>=intensity_range[i]])<=1) {
         LR_table[i,k] = 0;
 
     }
 
-
-    end
   }
 
 

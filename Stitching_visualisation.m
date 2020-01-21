@@ -1,4 +1,4 @@
-function [] = Stitching_visualisation(Analysis_result,Parameters,Channel,R)
+function [] = Stitching_visualisation(Analysis_result,Parameters,R,Channel)
 %Simple function to visualy check the quality of the image tiling
 
 if nargin < 3
@@ -12,20 +12,30 @@ if ~isfield(Analysis_result,'Global_stitching')
     return
 end
 
-Estimated_Y_size = max(Analysis_result.Global_stitching(:,1))-min(Analysis_result.Global_stitching(:,1));
-Estimated_X_size = max(Analysis_result.Global_stitching(:,2))-min(Analysis_result.Global_stitching(:,2));
+M = -Analysis_result.Global_stitching;
+X_min = min(M(:,1));
+Y_min = min(M(:,2));
+X_max = max(M(:,1));
+Y_max = max(M(:,2));
+
+%Adding extra values to capture the whole pocute 
+
+X_min = X_min - 1000;
+Y_min = Y_min - 1000;
+X_max = X_max + 1000;
+Y_max = Y_max + 1000;
 
 
 %Creating the (empty) merged image)
-Mixed_image = zeros(Estimated_X_size,Estimated_Y_size,Parameters.N_position);
+Mixed_image = zeros(X_max-X_min,Y_max-Y_min,Parameters.N_position);
 
 %Creating the spatial reference
-panorama_view = imref2d([Estimated_X_size,Estimated_Y_size]);
+panorama_view = imref2d([X_max-X_min,Y_max- Y_min],[X_min X_max], [Y_min Y_max]);
 
 
 for k = (1:Parameters.N_position)
     
-    T = affine2d([1 0 0 ; 0 1 0 ; -Analysis_result.Global_stitching(k,1) -Analysis_result.Global_stitching(k,2) 1]);
+    T = affine2d([1 0 0 ; 0 1 0 ; -Analysis_result.Global_stitching(k,1) ,-Analysis_result.Global_stitching(k,2) 1]);
     
     Round_directory = strcat(Parameters.Image_directory,"/Round_",string(R),"/");
 	Round_directory = char(Round_directory);
@@ -43,7 +53,7 @@ for k = (1:Parameters.N_position)
     
 end
 
-figure, imshow(imadjust(max(Mixed_image,[],[3])))
+figure, imshow(imadjust(max(Mixed_image,[],[3])),[])
 
 
 

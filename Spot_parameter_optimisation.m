@@ -5,7 +5,8 @@ function [Intensity_threshold Spot_intensity] = Spot_parameter_optimisation(Proc
 
 %Estimation of a different intensity thresold parameter for each channel using the Kulldorf scan test 
 
-if nargin < 5Round_directory = strcat(Parameters.Image_directory,"/Round_",string(R),"/");
+if nargin < 5
+Round_directory = strcat(Parameters.Image_directory,"/Round_",string(R),"/");
 Round_directory = char(Round_directory);
 Position_directory = strcat(Round_directory,"/Position_",string(P),"/");
 Position_directory = char(Position_directory);
@@ -130,7 +131,7 @@ for k=1:l
 
     table_threshold = readtable(strcat(temporary_directory,'Table_channel',num2str(k),'.txt'));
 
-    [~ ,t] = max(table_threshold.Score);
+    [x ,t] = min(table_threshold.Score);
 
     Intensity_threshold(k) = table_threshold.Intensity(max(t,1));
 

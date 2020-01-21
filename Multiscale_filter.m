@@ -1,4 +1,4 @@
-function [List_spots] = Multiscale_filter(Processed_Image,use_GPU,sigma_small,N,Threshold_adjustement)
+function [List_spots] = Multiscale_filter(Processed_Image,use_GPU,sigma_small,sigma_max,N,Threshold_adjustement)
 %Spot detection performed using multiscale filtering
 %The 
 
@@ -8,7 +8,7 @@ if nargin < 5
     use_GPU = true;
     sigma_small = 1; %% Size of the smallest gaussian filter, in pixel 
     N = 3 ; %%Number of scales used 
-    Threshold_adjustement = 0.05;
+    Threshold_adjustement = 0.0;
     disp('All needed parameters have not been specified. Running using default parameters')
 end
 
@@ -30,7 +30,7 @@ l = size(Processed_Image,4);
 
 
 %Creating objects
-sigma_list =  sigma_small * 2.^(0:(N-1));
+sigma_list =  linspace(sigma_small,sigma_max,N);
 List_matrix = zeros([size(Processed_Image),N]);
 
 
@@ -42,11 +42,16 @@ for k=1:l
     for i=1:numstack
         for j = 1:N
             Smoothed_data = imgaussfilt(Processed_Image(:,:,i,k),sigma_list(j));
-            [gx, gy] = imgradientxy(Smoothed_data);
-            [gxx, gxy] = imgradientxy(gx);
-            [gyx, gyy] = imgradientxy(gy);
-            Determinant = gxx.*gyy - 2*gxy;
-            List_matrix(:,:,i,k,j) = gather(Determinant);
+            method_grad = 'central';
+            [Gx, Gy] = imgradientxy(Smoothed_data);
+            [Gxx, Gxy] = imgradientxy(Gx);
+            [Gyx, Gyy] = imgradientxy(Gy);
+
+            Determinant = Gxx.*Gyy - 2*Gxy;
+            Sum_eigenvalues = (Gxx.^2 + Gyy.^2 - 2*Gxy.^2);
+           
+
+            List_matrix(:,:,i,k,j) = (sqrt(gather(Sum_eigenvalues)));
         end
     end
 end
@@ -64,8 +69,11 @@ Discretized_signal = zeros(size(Processed_Image));
 
 parfor k = 1:l
     
-    Cleaned_signal_temp = (Cleaned_signal(:,:,:,k));
+    Cleaned_signal_temp = real(Cleaned_signal(:,:,:,k));
+    
+    Cleaned_signal_temp = Cleaned_signal_temp-min(Cleaned_signal_temp(:));
     Cleaned_signal_temp = Cleaned_signal_temp./max(Cleaned_signal_temp(:));
+    Cleaned_signal_temp(Cleaned_signal_temp>1) = 1;
     Cleaned_signal_list = Cleaned_signal_temp(:);
     
     [Histogram_count Histogram_bin] = hist(Cleaned_signal_list,100);
@@ -81,7 +89,7 @@ parfor k = 1:l
     [X, dist_closest] = knnsearch(Line_points,Histo_points,'K',1);
     Threshold = Histogram_bin(find(dist_closest==max(dist_closest)));
 
-    Discretized_signal(:,:,:,k) = Cleaned_signal_temp > Threshold+ Threshold_adjustement;
+    Discretized_signal(:,:,:,k) = Cleaned_signal_temp > Threshold*(1+ Threshold_adjustement);
 end
 
 

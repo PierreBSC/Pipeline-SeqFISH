@@ -14,15 +14,16 @@ Position_directory = char(Position_directory);
 
 RNA_data=LoadImage(Position_directory,true,Channel); 
 RNA_data = Pre_processing(RNA_data,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,Parameters.tolerance); 
-RNA_data = mean(RNA_data,3);
+
+%RNA_data = mean(RNA_data,3);
 focus_score = [];
 for k = 1:size(RNA_data,3)
-    focus_score = [focus_score fmeasure(RNA_data(:,:,k),'HELM')];
+    focus_score = [focus_score fmeasure(RNA_data(:,:,k),'ACMO')];
 end
 [~ , best_stack] = max(focus_score);
 RNA_data = RNA_data(:,:,best_stack);
 
-figure, imshow(imadjust(RNA_data,stretchlim(RNA_data,0.0001)))
+figure, imshow(imadjust(RNA_data,stretchlim(RNA_data,0.0005)))
 hold on
 Raw_spots = Analysis_result.Spot_analysis_raw{R,Channel,P};
 scatter(Raw_spots(:,1),Raw_spots(:,2),'LineWidth',4)

@@ -63,14 +63,18 @@ CPS = IMF./(abs(FFT_Moving).*abs(FFT_Ref));
 Magnitude = (ifft2(CPS));
 Magnitude = Magnitude - min(Magnitude(:));
 Magnitude = fftshift(Magnitude);
-%Smoothing the peaks values
+
+%Detecting the peak and quantifying its intensity
 
 [X Y] = find((Magnitude == (max(max(Magnitude)))));
 
 X= X-Mov_X;
 Y = Y-Mov_Y;
 
-Intensity_peak = max(Magnitude(:))/std(Magnitude(:));
+%FOr the peak intensity : normalised cross correlation is computed
+Cross_cor = normxcorr2((Ref_Image),(Moving_Image));
+Intensity_peak = Cross_cor(-X+size(Ref_Image,1),-Y+size(Ref_Image,2));
+
 
 %Creating the affine2D object that we can apply on 
 Stitching_transformation = affine2d([1 0 0 ; 0 1 0 ; Y X 1]);

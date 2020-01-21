@@ -22,7 +22,7 @@ prompt = {  'Name of experiment', ...
             };
 dlgtitle = 'Parameters for seq-FISH spot detection';
 dims = [1 35];
-definput = {'seq-FISH analysis','1','true','false','1','25','true','20','true','0','Multiscale','1','10','0','8','1.5','10','40000','true'};
+definput = {'seq-FISH analysis','1','true','false','1','25','true','30','true','0','Multiscale','1','3','0','2.5','3','10','40000','true'};
 
 answer = inputdlg(prompt,dlgtitle,dims,definput);
 

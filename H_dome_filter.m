@@ -159,7 +159,8 @@ for k=1:l
      %Filtering the spots based on the different values  
     Selected_spots = spot_determinant<det_threshold & count_cluster(:,2)>5;
 
-    spot_list{k} = Final_clusters(Selected_spots,:);
+    
+    spot_list{k} = Final_clusters(Selected_spots,[2 1 3]);
 
 end
 
