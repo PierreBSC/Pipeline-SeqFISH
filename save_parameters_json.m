@@ -1,8 +1,15 @@
 function save_parameters_json(parameters,file_name)
 
-% Save detection settings
+% Create json string
 jsonStr = jsonencode(parameters);
 
+% Create folder if not present
+[path, name] = fileparts(file_name);
+if ~isfolder(path)
+    mkdir(path)
+end
+
+% Save to file
 fid = fopen(file_name, 'w');
 
 if fid == -1
