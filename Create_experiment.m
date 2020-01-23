@@ -10,7 +10,7 @@ Image_directory = uigetdir('title','Provide the path to the Image Folder');
 if Image_directory == 0; return; end
 
 % Geting the parameter for spot detection through a user Interface
-Parameters = Define_parameters_spot_detection();
+Parameters = Define_parameters_spot_detection(Parameters);
 if isempty(Parameters); return; end
 
 % Adding parameters for cell segmentation
