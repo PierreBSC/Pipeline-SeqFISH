@@ -2,7 +2,15 @@ function Analysis_result=Spot_detection(Analysis_result,Parameters)
 %Generic function that performs spot detection
 %Requires an Analysis_result and Parameters objects to already exist
 
-disp('Starting of the spot detection analysis')
+disp(' >>> Start spot detection')
+
+if Parameters.use_GPU
+    if gpuDeviceCount > 0
+        d = gpuDevice;
+        fprintf('\nWill use GPU computing for some analysis steps: %s.\n',d.Name)
+    end
+end
+
 
 %First step : create a new element inside the Analysis_result to store the
 %results of spot detection analysis

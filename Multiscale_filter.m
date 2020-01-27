@@ -1,9 +1,7 @@
 function [List_spots] = Multiscale_filter(Processed_Image,use_GPU,sigma_small,sigma_max,N,Threshold_adjustement)
 %Spot detection performed using multiscale filtering
-%The 
 
-
-
+% Default paramter when not enough input is provided
 if nargin < 5
     use_GPU = true;
     sigma_small = 1; %% Size of the smallest gaussian filter, in pixel 
@@ -12,9 +10,7 @@ if nargin < 5
     disp('All needed parameters have not been specified. Running using default parameters')
 end
 
-
-
-%%If needed sending the Image data to the GPU memory
+% If specified: send image data to the GPU memory
 if use_GPU
     if gpuDeviceCount > 0
         Processed_Image = gpuArray(Processed_Image);
@@ -32,7 +28,6 @@ l = size(Processed_Image,4);
 %Creating objects
 sigma_list =  linspace(sigma_small,sigma_max,N);
 List_matrix = zeros([size(Processed_Image),N]);
-
 
 %Computing the determinant of the Hessian matrix at different scales on
 %each stack for each channel
