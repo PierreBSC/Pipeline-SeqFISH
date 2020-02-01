@@ -1,0 +1,140 @@
+\begin{thebibliography}{10}
+
+\bibitem{shah_situ_2016}
+Sheel Shah, Eric Lubeck, Wen Zhou, and Long Cai.
+\newblock In {Situ} {Transcription} {Profiling} of {Single} {Cells} {Reveals}
+  {Spatial} {Organization} of {Cells} in the {Mouse} {Hippocampus}.
+\newblock {\em Neuron}, 92(2):342--357, October 2016.
+
+\bibitem{eng_transcriptome-scale_2019}
+Chee-Huat~Linus Eng, Michael Lawson, Qian Zhu, Ruben Dries, Noushin Koulena,
+  Yodai Takei, Jina Yun, Christopher Cronin, Christoph Karp, Guo-Cheng Yuan,
+  and Long Cai.
+\newblock Transcriptome-scale super-resolved imaging in tissues by {RNA}
+  {seqFISH}+.
+\newblock {\em Nature}, 568(7751):235--239, April 2019.
+
+\bibitem{codeluppi_spatial_2018}
+Simone Codeluppi, Lars~E. Borm, Amit Zeisel, Gioele La~Manno, Josina~A. van
+  Lunteren, Camilla~I. Svensson, and Sten Linnarsson.
+\newblock Spatial organization of the somatosensory cortex revealed by
+  {osmFISH}.
+\newblock {\em Nature Methods}, 15(11):932--935, November 2018.
+
+\bibitem{chen_spatially_2015}
+Kok~Hao Chen, Alistair~N. Boettiger, Jeffrey~R. Moffitt, Siyuan Wang, and
+  Xiaowei Zhuang.
+\newblock Spatially resolved, highly multiplexed {RNA} profiling in single
+  cells.
+\newblock {\em Science}, 348(6233), April 2015.
+
+\bibitem{mueller_fish-quant:_2013}
+Florian Mueller, Adrien Senecal, Katjana Tantale, Hervé Marie-Nelly, Nathalie
+  Ly, Olivier Collin, Eugenia Basyuk, Edouard Bertrand, Xavier Darzacq, and
+  Christophe Zimmer.
+\newblock {FISH}-quant: automatic counting of transcripts in 3d {FISH} images.
+\newblock {\em Nature Methods}, 10(4):277--278, April 2013.
+
+\bibitem{ruusuvuori_evaluation_2010}
+Pekka Ruusuvuori, Tarmo Äijö, Sharif Chowdhury, Cecilia Garmendia-Torres,
+  Jyrki Selinummi, Mirko Birbaumer, Aimée~M. Dudley, Lucas Pelkmans, and Olli
+  Yli-Harja.
+\newblock Evaluation of methods for detection of fluorescence labeled
+  subcellular objects in microscope images.
+\newblock {\em BMC Bioinformatics}, 11(1):248, May 2010.
+
+\bibitem{smal_quantitative_2010}
+Ihor Smal, Marco Loog, Wiro Niessen, and Erik Meijering.
+\newblock Quantitative {Comparison} of {Spot} {Detection} {Methods} in
+  {Fluorescence} {Microscopy}.
+\newblock {\em IEEE Transactions on Medical Imaging}, 29(2):282--301, February
+  2010.
+
+\bibitem{stepka_performance_2015}
+Karel Štěpka, Pavel Matula, Petr Matula, Stefan Wörz, Karl Rohr, and Michal
+  Kozubek.
+\newblock Performance and sensitivity evaluation of 3d spot detection methods
+  in confocal microscopy.
+\newblock {\em Cytometry. Part A: The Journal of the International Society for
+  Analytical Cytology}, 87(8):759--772, August 2015.
+
+\bibitem{sponton_review_2015}
+Haldo Spontón and Juan Cardelino.
+\newblock A {Review} of {Classic} {Edge} {Detectors}.
+\newblock {\em Image Processing On Line}, 5:90--123, June 2015.
+
+\bibitem{vincent_morphological_1993}
+L.~Vincent.
+\newblock Morphological grayscale reconstruction in image analysis:
+  applications and efficient algorithms.
+\newblock {\em IEEE Transactions on Image Processing}, 2(2):176--201, April
+  1993.
+
+\bibitem{carreira-perpinan_review_2015}
+Miguel~Á Carreira-Perpiñán.
+\newblock A review of mean-shift algorithms for clustering.
+\newblock {\em arXiv:1503.00687 [cs, stat]}, March 2015.
+\newblock arXiv: 1503.00687.
+
+\bibitem{foltankova_hybrid_2013}
+Veronika Foltánková, Pavel Matula, Dmitry Sorokin, Stanislav Kozubek, and Eva
+  Bártová.
+\newblock Hybrid {Detectors} {Improved} {Time}-{Lapse} {Confocal} {Microscopy}
+  of {PML} and 53bp1 {Nuclear} {Body} {Colocalization} in {DNA} {Lesions}.
+\newblock {\em Microscopy and Microanalysis}, 19(2):360--369, April 2013.
+
+\bibitem{jin_vascular_2013}
+Jiaoying Jin, Linjun Yang, Xuming Zhang, and Mingyue Ding.
+\newblock Vascular {Tree} {Segmentation} in {Medical} {Images} {Using}
+  {Hessian}-{Based} {Multiscale} {Filtering} and {Level} {Set} {Method}, 2013.
+
+\bibitem{zack_automatic_1977}
+G.~W. Zack, W.~E. Rogers, and S.~A. Latt.
+\newblock Automatic measurement of sister chromatid exchange frequency.
+\newblock {\em The Journal of Histochemistry and Cytochemistry: Official
+  Journal of the Histochemistry Society}, 25(7):741--753, July 1977.
+
+\bibitem{kulldorff_spatial_1997}
+Martin Kulldorff.
+\newblock A spatial scan statistic.
+\newblock {\em Communications in Statistics - Theory and Methods},
+  26(6):1481--1496, January 1997.
+
+\bibitem{ng_spectral_2001}
+Andrew~Y. Ng, Michael~I. Jordan, and Yair Weiss.
+\newblock On {Spectral} {Clustering}: {Analysis} and an {Algorithm}.
+\newblock In {\em Proceedings of the 14th {International} {Conference} on
+  {Neural} {Information} {Processing} {Systems}: {Natural} and {Synthetic}},
+  {NIPS}'01, pages 849--856, Cambridge, MA, USA, 2001. MIT Press.
+\newblock event-place: Vancouver, British Columbia, Canada.
+
+\bibitem{zelnik-manor_self-tuning_2004}
+Lihi Zelnik-Manor and Pietro Perona.
+\newblock Self-tuning {Spectral} {Clustering}.
+\newblock In {\em Proceedings of the 17th {International} {Conference} on
+  {Neural} {Information} {Processing} {Systems}}, {NIPS}'04, pages 1601--1608,
+  Cambridge, MA, USA, 2004. MIT Press.
+\newblock event-place: Vancouver, British Columbia, Canada.
+
+\bibitem{nadler_diffusion_2005}
+Boaz Nadler, Stéphane Lafon, Ronald~R. Coifman, and Ioannis~G. Kevrekidis.
+\newblock Diffusion {Maps}, {Spectral} {Clustering} and {Eigenfunctions} of
+  {Fokker}-{Planck} {Operators}.
+\newblock In {\em Proceedings of the 18th {International} {Conference} on
+  {Neural} {Information} {Processing} {Systems}}, {NIPS}'05, pages 955--962,
+  Cambridge, MA, USA, 2005. MIT Press.
+\newblock event-place: Vancouver, British Columbia, Canada.
+
+\bibitem{szeliski_image_2006}
+Richard Szeliski.
+\newblock Image {Alignment} and {Stitching}: {A} {Tutorial}.
+\newblock {\em Foundations and Trends® in Computer Graphics and Vision},
+  2(1):1--104, 2006.
+
+\bibitem{preibisch_globally_2009}
+Stephan Preibisch, Stephan Saalfeld, and Pavel Tomancak.
+\newblock Globally optimal stitching of tiled 3d microscopic image
+  acquisitions.
+\newblock {\em Bioinformatics}, 25(11):1463--1465, June 2009.
+
+\end{thebibliography}

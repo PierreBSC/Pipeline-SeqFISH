@@ -1,0 +1,31 @@
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}SeqFISH data : properties and challenges}{3}{section.1}% 
+\contentsline {subsection}{\numberline {1.1}Introduction}{3}{subsection.1.1}% 
+\contentsline {subsection}{\numberline {1.2}Automated processing of seqFISH data is required}{3}{subsection.1.2}% 
+\contentsline {subsection}{\numberline {1.3}Current state of the art}{3}{subsection.1.3}% 
+\contentsline {section}{\numberline {2}Detection and counting of RNA molecules}{4}{section.2}% 
+\contentsline {subsection}{\numberline {2.1}Choice of the method}{4}{subsection.2.1}% 
+\contentsline {subsection}{\numberline {2.2}H-dome based spot detection}{4}{subsection.2.2}% 
+\contentsline {subsubsection}{\numberline {2.2.1}LoG filter}{5}{subsubsection.2.2.1}% 
+\contentsline {subsubsection}{\numberline {2.2.2}H-dome transformation}{6}{subsubsection.2.2.2}% 
+\contentsline {subsubsection}{\numberline {2.2.3}Pixel sampling and aggregation}{7}{subsubsection.2.2.3}% 
+\contentsline {subsubsection}{\numberline {2.2.4}Pixel clusters filtering}{8}{subsubsection.2.2.4}% 
+\contentsline {subsubsection}{\numberline {2.2.5}Parameters of the HD approach}{9}{subsubsection.2.2.5}% 
+\contentsline {subsection}{\numberline {2.3}Multiscale spot detection}{9}{subsection.2.3}% 
+\contentsline {subsubsection}{\numberline {2.3.1}Multiscale Hessian matrix determinant computation}{10}{subsubsection.2.3.1}% 
+\contentsline {subsubsection}{\numberline {2.3.2}Automated thresholding and spot extraction}{10}{subsubsection.2.3.2}% 
+\contentsline {subsubsection}{\numberline {2.3.3}Parameters of the Multiscale approach}{10}{subsubsection.2.3.3}% 
+\contentsline {subsection}{\numberline {2.4}Removing non specific spots}{11}{subsection.2.4}% 
+\contentsline {subsection}{\numberline {2.5}Quality Control of the spots}{12}{subsection.2.5}% 
+\contentsline {section}{\numberline {3}Cell segmentation}{12}{section.3}% 
+\contentsline {subsection}{\numberline {3.1}Limitations of current cell segmentation methods}{12}{subsection.3.1}% 
+\contentsline {subsection}{\numberline {3.2}RNA spots based segmentation}{13}{subsection.3.2}% 
+\contentsline {subsubsection}{\numberline {3.2.1}Principles}{13}{subsubsection.3.2.1}% 
+\contentsline {subsubsection}{\numberline {3.2.2}Spectral clustering of the RNA spots}{14}{subsubsection.3.2.2}% 
+\contentsline {subsubsection}{\numberline {3.2.3}Aggregation of spot clusters}{16}{subsubsection.3.2.3}% 
+\contentsline {subsubsection}{\numberline {3.2.4}Final cell shape estimation}{16}{subsubsection.3.2.4}% 
+\contentsline {subsubsection}{\numberline {3.2.5}Removing cell overlaps}{16}{subsubsection.3.2.5}% 
+\contentsline {section}{\numberline {4}Image alignment and stitching}{17}{section.4}% 
+\contentsline {subsection}{\numberline {4.1}Requirement of Image alignment and stitching for seqFISH data processing and analysis}{17}{subsection.4.1}% 
+\contentsline {subsection}{\numberline {4.2}Image registration using phase correlation method}{18}{subsection.4.2}% 
+\contentsline {subsection}{\numberline {4.3}Computation of the cumulative stitching vectors }{19}{subsection.4.3}% 
