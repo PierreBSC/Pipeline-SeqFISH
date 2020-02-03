@@ -1,19 +1,32 @@
-function Matrix_design = Define_matrix_design()
+function Parameters = Define_data_organization(Parameters)
 
-prompt = {  'Number of rounds',
+prompt = {  'Name of experiment', ...
+            'Number of positions', ...
+            'Number of rounds', ...
             'Number of channels'
 };
 dlgtitle = 'Experiment design information';
 dims = [1 35];
-definput = {'1' '4'};
+
+if isfield(Parameters,'Experiment_name')
+    definput = {Parameters.Experiment_name, ...
+                num2str(Parameters.N_position), ...
+                num2str(Parameters.N_round), ...
+                num2str(Parameters.N_channel), ...
+                };
+else
+    definput = {'seq-FISH analysis','1','1','4'};
+end
 
 answer = inputdlg(prompt,dlgtitle,dims,definput);
 
 if ~ isempty(answer)
     
     % Read parameters
-    N_Rounds = str2num(answer{1}); 
-    N_Channels = str2num(answer{2});
+    Experiment_name = answer{1}; 
+    N_position = str2num(answer{2});
+    N_Rounds = str2num(answer{3}); 
+    N_Channels = str2num(answer{4});
     
     Table_base = repmat("RNA",1,N_Rounds*N_Channels); 
     Table_base=cellstr(Table_base);
@@ -35,8 +48,18 @@ if ~ isempty(answer)
     end
     Matrix_design.Properties.VariableNames = names_col;
     
+    Parameters.Matrix_design = Matrix_design;
+    Parameters.Experiment_name = Experiment_name;
+    Parameters.N_position = N_position;
+    Parameters.N_round = size(Matrix_design,1);
+    Parameters.N_channel = size(Matrix_design,2);
 else
-    disp('Matrix design canceled')
-    Matrix_design = {};
+    disp('Definition of experiment canceled.')
 end
+
+
+
+
+
+
 
