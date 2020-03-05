@@ -57,6 +57,7 @@ Launching this function will initiate a simple graphical interface with five suc
  
 4. On the same window, you can select the paremeters for the spot detection step. Two different spots detection method can be used : the  **Multiscale** and the **H-dome** spot detection methods. For an extensive comparison of the two methods please read the mathematical appendix.  The parameters of both methods can be tuned but we strongly recommend the user to start with default paramters to reduce over-fitting. You can also to apply spatial filtering to the spots in order to remove non specific signal.
 
+
 5. The last window will contains the cell segmentation parameters. Again, default parameters will perform reasonably well in most of the cases and a detailed description of the parameters can be found at the end of this guide.  
 
    <img src="Screenshots/Matrix_design.png" alt="Matrix_design.png" width="350">
