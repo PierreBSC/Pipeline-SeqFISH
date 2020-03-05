@@ -1,7 +1,7 @@
-SeqFISH and smFISH data processing using SAMAEL pipeline
+SeqFISH and smFISH data processing using ASAP pipeline
 =============================
 
-This guide has been written to efficiently pre-process single molecular (sm) or sequential (seq) FISH datasets using the SeqFISH AutoMAtEd Lightweight (**SAMAEL**) pipeline. In addition, basic Immuno Fluorescence (IF) staining data analysis can be performed. We strongly recommend the user to read the paper as well as the mathematical appendix before running any analysis.
+This guide has been written to efficiently pre-process single molecular (sm) or sequential (seq) FISH datasets using the  Automated Seqfish Analysis Pipeline (**ASAP**). In addition, basic Immuno Fluorescence (IF) staining data analysis can be performed. We strongly recommend the user to read the paper as well as the mathematical appendix before running any analysis.
 
 
 
@@ -10,7 +10,7 @@ Installation of the required softwares, packages and database
 
 This code has been tested on MacOS High Sierra and Ubuntu 18.0.4 but not in Windows.
 
-We recommend the users to use powerful and dedicated work stations and not personal laptops due to the high computation power and memory required for analysis. SAMAEL can perform some of the image processing steps on Nvidia Graphical Processing Units (GPUs). In the case of a Linux platform, users have to install the specific required GPU drivers.
+We recommend the users to use powerful and dedicated work stations and not personal laptops due to the high computation power and memory required for analysis. ASAP can perform some of the image processing steps on Nvidia Graphical Processing Units (GPUs). In the case of a Linux platform, users have to install the specific required GPU drivers.
 
 Several softwares and packages need to be installed :
 
@@ -27,7 +27,7 @@ To install the pipeline, simply download it from our [Github repository] (https:
 Image data formatting and organization
 -----------------------------------------------
 
-Before running SAMAEL, the data need to be organized in a precise manner to allow fully automated data processing. First the data are split in different folders corresponding to the different **imaging rounds**. In each round folder, data are again split into different folder corresponding to the different **imaging position**. In each of these position folder, **.png** files are stored, with each **.png** file corresponding to all the z-stacks of one imaging channel. In the case of large datasets, we recommend to use **Fiji** macro.
+Before running ASAP, the data need to be organized in a precise manner to allow fully automated data processing. First the data are split in different folders corresponding to the different **imaging rounds**. In each round folder, data are again split into different folder corresponding to the different **imaging position**. In each of these position folder, **.png** files are stored, with each **.png** file corresponding to all the z-stacks of one imaging channel. In the case of large datasets, we recommend to use **Fiji** macro.
 
 <img src="Screenshots/File_organisation.png" alt="File_organisation.png" width="400"/>
 
@@ -35,8 +35,6 @@ Before running SAMAEL, the data need to be organized in a precise manner to allo
 
 Objects creation and parameters setting
 -----------------------------------------------
-
-Before going any further in the pi
 
 The analysis always start by creating two key objects/variables :
 - The Parameters object, that contains the values of all parameters used during the analysis.
@@ -53,14 +51,13 @@ Launching this function will initiate a simple graphical interface with five suc
 
    <img src="Screenshots/Choice_directory.png" alt="Choice_directory.png" width="350">
 
+2. Then provide the details about the experimental design : First set the number of rounds, channels and imaged positions. A new window will then open and contains a matrix where the rows correspond to the rounds and the columns the channels.    By default all channels/rounds combinations will be considered as generating smFISH-like data and have a **RNA** label. To modify the kind of data, replace the RNA label by the **DAPI** or **IF** label for DAPI and Immunofluorescence data respectively. If a channel is not used at a given round put any other character string of your choice.
 
-2. Then use the second window to define the **general and spot detection parameters**.  First set up basic parameters including : the number of positions, the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. In all cases, be sure to adjust for the number of positions : by default only the first position will be processed
+3.You will then have to set the **spot detection parameters**.  First set up basic parameters including : the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. 
  
-3. On the same window, you can select the paremeters for the spot detection step. Two different spots detection method can be used : the  **Multiscale** and the **H-dome** spot detection methods. For an extensive comparison of the two methods please read the mathematical appendix.  The parameters of both methods can be tuned but we strongly recommend the user to start with default paramters to reduce over-fitting. 
+4. On the same window, you can select the paremeters for the spot detection step. Two different spots detection method can be used : the  **Multiscale** and the **H-dome** spot detection methods. For an extensive comparison of the two methods please read the mathematical appendix.  The parameters of both methods can be tuned but we strongly recommend the user to start with default paramters to reduce over-fitting. You can also to apply spatial filtering to the spots in order to remove non specific signal.
 
-3. The third window will contains the cell segmentation parameters. Again, default parameters will perform reasonably well in most of the cases and a detailed description of the parameters can be found at the end of this guide.  
-
-4. Lastly, the fourth and fifth windows allow you to provide the experimental design to the pipeline. First set the number of rounds and    channels. The fifth window will then open and contains a matrix where the rows correspond to the rounds and the columns the channels.    By default all channels/rounds combinations will be considered as generating smFISH-like data and have a **RNA** label. To modify the    kind of data, replace the RNA label by the **DAPI** or **IF** label for DAPI and Immunofluorescence data respectively. If a channel      is not used at a given round put any other character string of your choice. 
+5. The last window will contains the cell segmentation parameters. Again, default parameters will perform reasonably well in most of the cases and a detailed description of the parameters can be found at the end of this guide.  
 
    <img src="Screenshots/Matrix_design.png" alt="Matrix_design.png" width="350">
 
