@@ -14,9 +14,9 @@ We recommend the users to use powerful and dedicated work stations and not perso
 
 Several softwares and packages need to be installed :
 
-- The first step is to install [**R software**] (https://www.r-project.org/). Once this is done, the **spatstat** package has to be installed too. The package is directly available on the [CRAN server] (https://CRAN.R-project.org/package=spatstat). 
-- [**Matlab**] (https://www.mathworks.com) has to be installed, as well as the [**Image processing toolbox**] (https://www.mathworks.com/products/image.html). We recommend using Matlab 2017 or a more recent version to avoid any compatibility issue.
-- While not strictly required, we recommend to download and use the excellent tool [**Fiji**] (https://imagej.net/Fiji) to visualize and check the data before analyzing them.
+- The first step is to install [**R software**](https://www.r-project.org/). Once this is done, the **spatstat** package has to be installed too. The package is directly available on the [CRAN server](https://CRAN.R-project.org/package=spatstat). 
+- [**Matlab**](https://www.mathworks.com) has to be installed, as well as the [**Image processing toolbox**](https://www.mathworks.com/products/image.html). We recommend using Matlab 2017 or a more recent version to avoid any compatibility issue.
+- While not strictly required, we recommend to download and use the excellent tool [**Fiji**](https://imagej.net/Fiji) to visualize and check the data before analyzing them.
 
 Installation of the pipeline
 --------------------------------------
