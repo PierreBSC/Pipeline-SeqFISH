@@ -21,7 +21,7 @@ Several softwares and packages need to be installed :
 Installation of the pipeline
 --------------------------------------
 
-To install the pipeline, simply download it from our [Github repository] (https://github.com/PierreBSC/Pipeline-SeqFISH). Unzip it and open Matlab. Click on the **Set Path** button and then on the **Add button** to select the unzipped directory before saving (**Save button**) . If this is not working, change the working directory and select the pipeline directory.
+To install the pipeline, simply download it from our [Github repository](https://github.com/PierreBSC/Pipeline-SeqFISH). Unzip it and open Matlab. Click on the **Set Path** button and then on the **Add button** to select the unzipped directory before saving (**Save button**) . If this is not working, change the working directory and select the pipeline directory.
 
 
 Image data formatting and organization
