@@ -199,4 +199,15 @@ The estimated transformation can now be applied to the spot location and will cr
 Global_analysis_results = Compute_global_point_position(Analysis_result,Parameters);
 ```
 
+The segmentation step can now be applied and just required a little modification of one setting :
 
+```matlab
+Parameters.N_position = 1 ;
+Global_analysis_results = Spot_based_segmentation(Global_analysis_results,Parameters);
+```
+Lastly we can of course compute the gene and IF expression of each cell :
+
+```matlab
+[Global_analysis_results, RNA_table] = Compute_cell_RNA_expression(Global_analysis_results,Parameters);
+[Global_analysis_results, IF_table] = Compute_cell_fluorescence(Global_analysis_results,Parameters,'IF');
+```
