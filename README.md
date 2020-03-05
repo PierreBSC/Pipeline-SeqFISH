@@ -14,7 +14,7 @@ We recommend the users to use powerful and dedicated work stations and not perso
 
 Several softwares and packages need to be installed :
 
-1. The first step is to install [**R software**] (https://www.r-project.org/). Once this is done, the **spatstat** package has to be installed too. The package is directly available on the [CRAN server] (https://CRAN.R-project.org/package=spatstat). 
+- The first step is to install [**R software**] (https://www.r-project.org/). Once this is done, the **spatstat** package has to be installed too. The package is directly available on the [CRAN server] (https://CRAN.R-project.org/package=spatstat). 
 - [**Matlab**] (https://www.mathworks.com) has to be installed, as well as the [**Image processing toolbox**] (https://www.mathworks.com/products/image.html). We recommend using Matlab 2017 or a more recent version to avoid any compatibility issue.
 - While not strictly required, we recommend to download and use the excellent tool [**Fiji**] (https://imagej.net/Fiji) to visualize and check the data before analyzing them.
 
@@ -53,7 +53,7 @@ Launching this function will initiate a simple graphical interface with five suc
 
 2. Then provide the details about the experimental design : First set the number of rounds, channels and imaged positions. A new window will then open and contains a matrix where the rows correspond to the rounds and the columns the channels.    By default all channels/rounds combinations will be considered as generating smFISH-like data and have a **RNA** label. To modify the kind of data, replace the RNA label by the **DAPI** or **IF** label for DAPI and Immunofluorescence data respectively. If a channel is not used at a given round put any other character string of your choice.
 
-3.You will then have to set the **spot detection parameters**.  First set up basic parameters including : the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. 
+3. You will then have to set the **spot detection parameters**.  First set up basic parameters including : the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. 
  
 4. On the same window, you can select the paremeters for the spot detection step. Two different spots detection method can be used : the  **Multiscale** and the **H-dome** spot detection methods. For an extensive comparison of the two methods please read the mathematical appendix.  The parameters of both methods can be tuned but we strongly recommend the user to start with default paramters to reduce over-fitting. You can also to apply spatial filtering to the spots in order to remove non specific signal.
 
