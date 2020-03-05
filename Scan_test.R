@@ -1,9 +1,10 @@
-library(spatstat)
+suppressMessages(library(spatstat))
 
 
 args <- commandArgs(trailingOnly = T)
 
 file_directory = as.character(args[1])
+Estimated_cell_size = as.numeric(args[2])
 
 
 n_channel = length(list.files(file_directory)) / 2
@@ -51,48 +52,43 @@ print(2)
 ##Performing the statistical analysis : spatial scan test from Kulldorf's paper (1997)
 
 
-analysis_granularity = 100;
+analysis_granularity = 30;
 
 
 LR_table = matrix(0,nrow = analysis_granularity,ncol = n_channel)
 
 list_threshold = c()
 
+List_autolag =  c()
 
 for (k in 1:n_channel) {
 
   
   #Creating the  intensity threshold list
   intensity = intensity_list[[k]]
-  intensity_range = quantile(intensity,probs = seq(from = 0,to = 0.99,length.out =analysis_granularity ))
+
+  max_intensity = quantile(intensity,probs = 0.999)
+  min_intensity = quantile(intensity,probs = 0.01)
+  
+  intensity_range = seq(min_intensity,max_intensity,length.out = analysis_granularity)
 
   position = position_list[[k]]
   position_base = ppp(position[,1],position[,2],window = owin(c(min(position[,1]),max(position[,1])),c(min(position[,2]),max(position[,]))))
-  #position_base = ppp(position[,1],position[,2])
 
   if (nrow(position)>15) {
     
-  base_density = density.ppp(position_base,positive=TRUE,diggle =  T)
-
-  
 
   for (i in 1:analysis_granularity) {
 
     if (length(position$X[intensity>=intensity_range[i]])>1) {
 
-        X <- spatstat::ppp(position$X[intensity>=intensity_range[i]], position$Y[intensity>=intensity_range[i]], window=spatstat::owin(c(min(position[,1]),max(position[,1])),c(min(position[,2]),max(position[,]))))
-        
-        CE_index = clarkevans(X,correction = "Donnelly")
-        LR_table[i,k] = CE_index
+        X = ppp(position[,1],position[,2],window = owin(c(min(position[,1]),max(position[,1])),c(min(position[,2]),max(position[,]))),
+                marks = factor(ifelse(intensity>=intensity_range[i],"Positive","Negative")))
 
-        #test = spatstat::scan.test(X,r = c(100),alternative = "greater",verbose = F ,method = "poisson",baseline = base_density,nsim = 2)
-        #LR_table[i,k] = -test$statistic
-
-        hopskel = spatstat::hopskel(X)
-        LR_table[i,k] = hopskel
-
+          M = scanLRTS(X,r = Estimated_cell_size,alternative = "greater",method = "binomial",case = "Positive")
         
-        
+        LR_table[i,k] = -max(M)
+
     }
     if (length(position$X[intensity>=intensity_range[i]])<=1) {
         LR_table[i,k] = 0;
@@ -103,22 +99,19 @@ for (k in 1:n_channel) {
 
 
   }
-
-
-
-
-
   
-
+  x =  LR_table[,k]
+  Autolog = (cor(x[-1],x[-length(x)]))^2  
+  List_autolag = c(List_autolag,Autolog)
+  
   list_threshold[[k]] = data.frame(Intensity = intensity_range, Score = LR_table[,k] )
-
 }
 
 print(3)
 for (k in 1:n_channel)  {
 
   u = list_threshold[[k]]
-
   write.table(x = u,file = paste(file_directory,"Table_channel",k,".txt",sep = ""),sep = "\t",quote = F,row.names = F)
-
 }
+
+write.table(x = List_autolag,file = paste(file_directory,"Table_autolag_score.txt",sep = ""),sep = "\t",quote = F,row.names = F,col.names = F)

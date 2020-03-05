@@ -33,7 +33,7 @@ Mixed_image = zeros(X_max-X_min,Y_max-Y_min,Parameters.N_position);
 panorama_view = imref2d([X_max-X_min,Y_max- Y_min],[X_min X_max], [Y_min Y_max]);
 
 
-for k = (1:Parameters.N_position)
+parfor k = (1:Parameters.N_position)
     
     T = affine2d([1 0 0 ; 0 1 0 ; -Analysis_result.Global_stitching(k,1) ,-Analysis_result.Global_stitching(k,2) 1]);
     
@@ -45,15 +45,19 @@ for k = (1:Parameters.N_position)
 
     
     Image = LoadImage(Position_directory,true,Channel); 
-    Image = Pre_processing(Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,false,0); 
-	Image = mean(Image,3);
+    Image = max(Image,[],[3]);
+
     warped_Image = imwarp(Image,T,'OutputView',panorama_view);
 
     Mixed_image(:,:,k) = warped_Image;
     
 end
 
-figure, imshow(imadjust(max(Mixed_image,[],[3])),[])
+
+Mixed_image = max(Mixed_image,[],[3]);
+%Mixed_image = Pre_processing(Mixed_image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,false,0); 
+
+figure, imshow(imadjust(Mixed_image,stretchlim(Mixed_image(:),0.0001)),[])
 
 
 

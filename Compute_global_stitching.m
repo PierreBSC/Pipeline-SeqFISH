@@ -9,6 +9,16 @@ if nargin < 4
     R = 1;
 end 
 
+
+if Parameters.use_GPU
+    if gpuDeviceCount > 0
+        d = gpuDevice;
+        fprintf('\nWill use GPU computing for Image stitching steps: %s.\n',d.Name)
+    end
+end
+
+
+
 %%Creating the field of the Analysis_result object : list of vectors to
 %%apply to each
 
@@ -19,8 +29,8 @@ Analysis_result.Global_stitching = zeros(Parameters.N_position,2);
 % translation vector to align image i to image j
 % M_SNR elements (i,j) : quality of the peaks 
 
-M_x = zeros(Parameters.N_position);
-M_y = zeros(Parameters.N_position);
+M_x = zeros(Parameters.N_position,'single');
+M_y = zeros(Parameters.N_position,'single');
 M_SNR = zeros(Parameters.N_position);
 
 
@@ -41,24 +51,31 @@ for i = 1:Parameters.N_position
             Position_directory_j = char(Position_directory_j);
 
             Ref_Image = LoadImage(Position_directory_i,true,Channel); 
-            Ref_Image = Pre_processing(Ref_Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,0.001); 
+            Ref_Image = Pre_processing(Ref_Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,true,0.001); 
             Ref_Image = mean(Ref_Image,3);
             Ref_Image = imadjust(imgaussfilt(Ref_Image,2));
 
             
             Moving_Image = LoadImage(Position_directory_j,true,Channel); 
-            Moving_Image = Pre_processing(Moving_Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,Parameters.perform_intensity_adjustment,0.001); 
+            Moving_Image = Pre_processing(Moving_Image,Parameters.use_GPU,Parameters.Substack,Parameters.Stack_min,Parameters.Stack_max,Parameters.perform_background_removal,Parameters.background_sigma_parameter,true,0.001); 
             Moving_Image = mean(Moving_Image,3);
             Moving_Image = imadjust(imgaussfilt(Moving_Image,2));
             
-            [Stitching_transformation,Intensity_peak] = get_stitching_vector(Ref_Image,Moving_Image,'Inversed');
+            
+            if Parameters.use_GPU
+                if gpuDeviceCount > 0
+                    Moving_Image = gpuArray(Moving_Image);
+                    Ref_Image = gpuArray(Ref_Image);
+                end
+            end
+
+            [Stitching_transformation,Intensity_peak] = get_stitching_vector(Moving_Image,Ref_Image,"Inversed");
 
             M_SNR(i,j) = Intensity_peak;
             Stitching_transformation = Stitching_transformation.T;
-            M_x(i,j) = Stitching_transformation(3,1);
-            M_y(i,j) = Stitching_transformation(3,2);
+            M_x(i,j) = gather(Stitching_transformation(3,1));
+            M_y(i,j) = gather(Stitching_transformation(3,2));
             
-            %Cross_cor = normxcorr2((Ref_Image),(Moving_Image));
         end
     end
 end
@@ -158,7 +175,7 @@ end
 
 %Checking the final results
 plot(Graph_SNR)
-Analysis_result.Global_stitching = List_translation;
+Analysis_result.Global_stitching = -List_translation;
 
 end
 

@@ -1,4 +1,4 @@
-function [Filtered_spots] = Spot_filtering(Unfiltered_spots,Spot_intensity,Intensity_threshold)
+function [Filtered_spots] = Spot_filtering(Unfiltered_spots,Spot_intensity,Intensity_threshold,Autolag_score)
 %Filtering of the spot based on various criteria
 
 l = size(Unfiltered_spots,1);
@@ -11,8 +11,9 @@ for k=1:l
     
     temp_position = Unfiltered_spots{k};
     temp_position = temp_position(selected_spots,:);
-    Filtered_spots{k} = temp_position;
-    
+        
+	Filtered_spots{k} = temp_position;
+
 end
 
 end

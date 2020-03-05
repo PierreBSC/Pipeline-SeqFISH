@@ -1,4 +1,4 @@
-function [] = Segmentation_visualisation(Analysis_result,Parameters,P,R,Channel,Perform_on_filtered_spots)
+function [] = Segmentation_visualisation(Analysis_result,Parameters,P,R,Channel)
 %Visualisation function to view resulst of analysis segmentation
 
 
@@ -18,11 +18,11 @@ end
 RNA_data = RNA_data(:,:,best_stack);
 
 
-if Perform_on_filtered_spots
+if Parameters.Perform_on_filtered_spots
     Temp_spots_list = Analysis_result.Spot_analysis_filtered(:,:,P);
 end
 
-if ~Perform_on_filtered_spots
+if ~Parameters.Perform_on_filtered_spots
     Temp_spots_list = Analysis_result.Spot_analysis_raw(:,:,P);
 end
 
@@ -51,10 +51,9 @@ Selected_segmentation = Analysis_result.Spot_based_segmentation{P};
 N_cells = size(unique(Selected_segmentation(:,3)),1);
 
 for k=1:N_cells
-    X = Selected_segmentation(Selected_segmentation(:,3)==k,[2 1]);
+    X = Selected_segmentation(Selected_segmentation(:,3)==k,[1 2]);
     Final_boundary = X(boundary(X(:,1:2)),:);
     plot(Final_boundary(:,2),Final_boundary(:,1), 'LineWidth',3)
 end
 
 end
-

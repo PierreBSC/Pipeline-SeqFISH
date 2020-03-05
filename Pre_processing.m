@@ -39,8 +39,16 @@ if perform_background_removal
     disp("Perfoming background removal");
     for k = 1:l 
         for i = 1:numstack
+        %Initial implementation : gaussian bluring for background
+        %estimation
+        
         bg_image = imgaussfilt(Concat_Image(:,:,i,k),background_sigma_parameter);
         Concat_Image(:,:,i,k) = Concat_Image(:,:,i,k) - bg_image;
+        
+        %New implementation : tophat filtering 
+        %Concat_Image(:,:,i,k) = imtophat(gather(Concat_Image(:,:,i,k)),strel('disk',background_sigma_parameter));
+
+        
         end
     end
 end
@@ -75,7 +83,7 @@ if use_GPU
 end
 
 
-Processed_image=single(Concat_Image);
+Processed_image=(Concat_Image);
 disp("Pre-processing finished !");
 
 

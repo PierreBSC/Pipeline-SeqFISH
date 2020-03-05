@@ -3,6 +3,8 @@ function Analysis_result=Spot_detection(Analysis_result,Parameters)
 %Requires an Analysis_result and Parameters objects to already exist
 
 disp(' >>> Start spot detection')
+Autolag_score_threshold = 0.4;
+
 
 if Parameters.use_GPU
     if gpuDeviceCount > 0
@@ -19,6 +21,7 @@ Analysis_result.Spot_analysis_raw = cell(Parameters.N_round,Parameters.N_channel
 
 if Parameters.perform_spatial_statistic_test
     Analysis_result.Spot_analysis_filtered = cell(Parameters.N_round,Parameters.N_channel,Parameters.N_position);
+    Analysis_result.Autolag_score = cell(Parameters.N_round,Parameters.N_channel,Parameters.N_position);
 end
 
 for R = 1:Parameters.N_round
@@ -54,7 +57,7 @@ for R = 1:Parameters.N_round
             
             case "Multiscale"
                 disp('Performing spot detection using Multiscale method')
-                Unfiltered_spots = Multiscale_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.N_scales,Parameters.T_offset);
+                Unfiltered_spots = Multiscale_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.N_scales,Parameters.Quantile_parameter);
                 
             case "H-dome"
                 disp('Performing spot detection using HD method')
@@ -62,21 +65,24 @@ for R = 1:Parameters.N_round
                 
             otherwise
                 disp('No known spot detection method provided. Using Multiscale method  by default.')
-                Unfiltered_spots = Multiscale_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.N_scales,Parameters.T_offset);
+                Unfiltered_spots = Multiscale_filter(RNA_data,Parameters.use_GPU,Parameters.sigma_small,Parameters.sigma_max,Parameters.N_scales,Parameters.Quantile_parameter);
         end
        
         Analysis_result.Spot_analysis_raw(R,RNA_channel,P) = Unfiltered_spots; %Exporting the raw spots
         
         % If specified, a spatial statistical test is performed
         % to filter out signal of non-specificly  bound probes
-        if Parameters.perform_spatial_statistic_test
-            temporary_directory = '~/seqFISH_Temporary_file/';
-            [Intensity_threshold, Spot_intensity] = Spot_parameter_optimisation(RNA_data,Unfiltered_spots,Parameters.use_GPU,temporary_directory,strcat(pwd,'/Scan_test.R'),Parameters.sigma_small); %Computing the value intensity threshold
-            Filtered_spots = Spot_filtering(Unfiltered_spots,Spot_intensity,Intensity_threshold); %%Filtering of the spots
-            Analysis_result.Spot_analysis_filtered(R,RNA_channel,P) = Filtered_spots; %%
-        end
         
-        %clear RNA_data
+        if Parameters.perform_spatial_statistic_test
+            
+            temporary_directory = '~/seqFISH_Temporary_file/';
+            [Intensity_threshold, Spot_intensity, Autolag_score] = Spot_parameter_optimisation(RNA_data,Unfiltered_spots,Parameters.use_GPU,temporary_directory,strcat(pwd,'/Scan_test.R'),Parameters.background_sigma_parameter); %Computing the value intensity threshold
+            Filtered_spots = Spot_filtering(Unfiltered_spots,Spot_intensity,Intensity_threshold,Autolag_score); %%Filtering of the spots
+            Analysis_result.Spot_analysis_filtered(R,RNA_channel,P) = Filtered_spots; %%
+            Analysis_result.Autolag_score(R,RNA_channel,P) = table2cell(array2table(Autolag_score));
+
+        end
+                
         
     end
 end

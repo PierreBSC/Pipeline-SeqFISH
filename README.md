@@ -1,7 +1,7 @@
-SeqFISH and smFISH data processing using ASAP pipeline
+SeqFISH and smFISH data processing using SAMAEL pipeline
 =============================
 
-This guide has been written to efficiently pre-process single molecular (sm) or sequential (seq) FISH datasets using the  Automated Seqfish Analysis Pipeline (**ASAP**). In addition, basic Immuno Fluorescence (IF) staining data analysis can be performed. We strongly recommend the user to read the paper as well as the mathematical appendix before running any analysis.
+This guide has been written to efficiently pre-process single molecular (sm) or sequential (seq) FISH datasets using the SeqFISH AutoMAtEd Lightweight (**SAMAEL**) pipeline. In addition, basic Immuno Fluorescence (IF) staining data analysis can be performed. We strongly recommend the user to read the paper as well as the mathematical appendix before running any analysis.
 
 
 
@@ -10,24 +10,24 @@ Installation of the required softwares, packages and database
 
 This code has been tested on MacOS High Sierra and Ubuntu 18.0.4 but not in Windows.
 
-We recommend the users to use powerful and dedicated work stations and not personal laptops due to the high computation power and memory required for analysis. ASAP can perform some of the image processing steps on Nvidia Graphical Processing Units (GPUs). In the case of a Linux platform, users have to install the specific required GPU drivers.
+We recommend the users to use powerful and dedicated work stations and not personal laptops due to the high computation power and memory required for analysis. SAMAEL can perform some of the image processing steps on Nvidia Graphical Processing Units (GPUs). In the case of a Linux platform, users have to install the specific required GPU drivers.
 
 Several softwares and packages need to be installed :
 
-- The first step is to install [**R software**](https://www.r-project.org/). Once this is done, the **spatstat** package has to be installed too. The package is directly available on the [CRAN server](https://CRAN.R-project.org/package=spatstat). 
-- [**Matlab**](https://www.mathworks.com) has to be installed, as well as the [**Image processing toolbox**](https://www.mathworks.com/products/image.html). We recommend using Matlab 2017 or a more recent version to avoid any compatibility issue.
-- While not strictly required, we recommend to download and use the excellent tool [**Fiji**](https://imagej.net/Fiji) to visualize and check the data before analyzing them.
+1. The first step is to install [**R software**] (https://www.r-project.org/). Once this is done, the **spatstat** package has to be installed too. The package is directly available on the [CRAN server] (https://CRAN.R-project.org/package=spatstat). 
+- [**Matlab**] (https://www.mathworks.com) has to be installed, as well as the [**Image processing toolbox**] (https://www.mathworks.com/products/image.html). We recommend using Matlab 2017 or a more recent version to avoid any compatibility issue.
+- While not strictly required, we recommend to download and use the excellent tool [**Fiji**] (https://imagej.net/Fiji) to visualize and check the data before analyzing them.
 
 Installation of the pipeline
 --------------------------------------
 
-To install the pipeline, simply download it from our [Github repository](https://github.com/PierreBSC/Pipeline-SeqFISH). Unzip it and open Matlab. Click on the **Set Path** button and then on the **Add button** to select the unzipped directory before saving (**Save button**) . If this is not working, change the working directory and select the pipeline directory.
+To install the pipeline, simply download it from our [Github repository] (https://github.com/PierreBSC/Pipeline-SeqFISH). Unzip it and open Matlab. Click on the **Set Path** button and then on the **Add button** to select the unzipped directory before saving (**Save button**) . If this is not working, change the working directory and select the pipeline directory.
 
 
 Image data formatting and organization
 -----------------------------------------------
 
-Before running ASAP, the data need to be organized in a precise manner to allow fully automated data processing. First the data are split in different folders corresponding to the different **imaging rounds**. In each round folder, data are again split into different folder corresponding to the different **imaging position**. In each of these position folder, **.png** files are stored, with each **.png** file corresponding to all the z-stacks of one imaging channel. In the case of large datasets, we recommend to use **Fiji** macro.
+Before running SAMAEL, the data need to be organized in a precise manner to allow fully automated data processing. First the data are split in different folders corresponding to the different **imaging rounds**. In each round folder, data are again split into different folder corresponding to the different **imaging position**. In each of these position folder, **.png** files are stored, with each **.png** file corresponding to all the z-stacks of one imaging channel. In the case of large datasets, we recommend to use **Fiji** macro.
 
 <img src="Screenshots/File_organisation.png" alt="File_organisation.png" width="400"/>
 
@@ -35,6 +35,8 @@ Before running ASAP, the data need to be organized in a precise manner to allow 
 
 Objects creation and parameters setting
 -----------------------------------------------
+
+Before going any further in the pi
 
 The analysis always start by creating two key objects/variables :
 - The Parameters object, that contains the values of all parameters used during the analysis.
@@ -51,14 +53,14 @@ Launching this function will initiate a simple graphical interface with five suc
 
    <img src="Screenshots/Choice_directory.png" alt="Choice_directory.png" width="350">
 
-2. Then provide the details about the experimental design : First set the number of rounds, channels and imaged positions. A new window will then open and contains a matrix where the rows correspond to the rounds and the columns the channels.    By default all channels/rounds combinations will be considered as generating smFISH-like data and have a **RNA** label. To modify the kind of data, replace the RNA label by the **DAPI** or **IF** label for DAPI and Immunofluorescence data respectively. If a channel is not used at a given round put any other character string of your choice.
 
-3. You will then have to set the **spot detection parameters**.  First set up basic parameters including : the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. 
+2. Then use the second window to define the **general and spot detection parameters**.  First set up basic parameters including : the number of positions, the use of GPU to increase computing speed, if only a specific set of stacks should be used and if background should be removed using gaussian smoothing. For more details please look at the table listing all parameters and their effect. In all cases, be sure to adjust for the number of positions : by default only the first position will be processed
  
-4. On the same window, you can select the paremeters for the spot detection step. Two different spots detection method can be used : the  **Multiscale** and the **H-dome** spot detection methods. For an extensive comparison of the two methods please read the mathematical appendix.  The parameters of both methods can be tuned but we strongly recommend the user to start with default paramters to reduce over-fitting. You can also to apply spatial filtering to the spots in order to remove non specific signal.
+3. On the same window, you can select the paremeters for the spot detection step. Two different spots detection method can be used : the  **Multiscale** and the **H-dome** spot detection methods. For an extensive comparison of the two methods please read the mathematical appendix.  The parameters of both methods can be tuned but we strongly recommend the user to start with default paramters to reduce over-fitting. 
 
+3. The third window will contains the cell segmentation parameters. Again, default parameters will perform reasonably well in most of the cases and a detailed description of the parameters can be found at the end of this guide.  
 
-5. The last window will contains the cell segmentation parameters. Again, default parameters will perform reasonably well in most of the cases and a detailed description of the parameters can be found at the end of this guide.  
+4. Lastly, the fourth and fifth windows allow you to provide the experimental design to the pipeline. First set the number of rounds and    channels. The fifth window will then open and contains a matrix where the rows correspond to the rounds and the columns the channels.    By default all channels/rounds combinations will be considered as generating smFISH-like data and have a **RNA** label. To modify the    kind of data, replace the RNA label by the **DAPI** or **IF** label for DAPI and Immunofluorescence data respectively. If a channel      is not used at a given round put any other character string of your choice. 
 
    <img src="Screenshots/Matrix_design.png" alt="Matrix_design.png" width="350">
 
@@ -82,7 +84,7 @@ Let's say you want to look at the spots detection analysis performed on a given 
 Analysis_result = Spot_visualisation(Analysis_result,Parameters,2,1,4);
 ```
 This command will project the position of the identified spots on a mean z-stack intensity projection allowing to evaluate the sensitivity and specificity of the spot detection method.
-In the example given, the spots and image come from Position two, Round one and Channel four, as specified in the function.
+In the example given, the spots and image come from position 2, round 1 and channel 4, as specified in the function.
 
 <img src="Screenshots/Example_good_spot_detection.png" alt="Example_good_spot_detection.png" width="300">
 
@@ -91,7 +93,7 @@ When using this function, spots that passed  the spatial filtering step are repr
 If the analysis did not perform well you can simply change the parameters by accessing the different fields of the **Parameters** object. For instance if you want to increase the treshold offset used in the Multiscale algorithm to 0.1  and relaunch the analysis simply write :
 
 ```matlab
-Parameters.sigma_small = 0.1;
+Parameters.T_offset= 0.1;
 Analysis_result = Spot_detection(Analysis_result,Parameters);
 ```
 
@@ -174,40 +176,5 @@ Those informations are :
 3. Mean DAPI staining intensity. 
 4. Total number of RNA spots detected in that cell.
 
-This table will also be saved in the ouput directory as previously described.
 
-Performing analysis on overlapping positions  
------------------------------------------------
-
-Usually the different imaged positions are partially overlapping and can be stitched into one large picture. ASAP is able to compute the set of translation vectors needed to align the different pictures and then use them to create a global map of gene expression. To do so it uses an in-house implementation of the phase correlation alignment method that relies on Fast Fourrier Transform (FFT) to increase computational speed.
-
-To compute the set of stitching vectors simply type :
-
-```matlab
-Analysis_result = Compute_global_stitching(Analysis_result,Parameters,1,2);
-```
-Here the third and fourth specifies the Round and Channel used to compute the stitching vectors (here the first Round and second Channel).
-
-The results can be viewed using :
-
-```matlab
-Stitching_visualisation(Analysis_result,Parameters,1,2);
-```
-The estimated transformation can now be applied to the spot location and will create a new **result** object :
-
-```matlab
-Global_analysis_results = Compute_global_point_position(Analysis_result,Parameters);
-```
-
-The segmentation step can now be applied and just required a little modification of one setting :
-
-```matlab
-Parameters.N_position = 1 ;
-Global_analysis_results = Spot_based_segmentation(Global_analysis_results,Parameters);
-```
-Lastly we can of course compute the gene and IF expression of each cell :
-
-```matlab
-[Global_analysis_results, RNA_table] = Compute_cell_RNA_expression(Global_analysis_results,Parameters);
-[Global_analysis_results, IF_table] = Compute_cell_fluorescence(Global_analysis_results,Parameters,'IF');
-```
+This table will also be saved in the ouput directory as 

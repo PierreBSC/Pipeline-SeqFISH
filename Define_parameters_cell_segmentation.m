@@ -7,7 +7,8 @@ prompt = {  'Min spots per cell', ...
             'T (Diffusion)',...
             'Minimal similarity',...
             'Cell spread',...
-            'Use filtered spots ?'
+            'Use filtered spots ?',...
+            'Remove overlaps ?'
             };
 dlgtitle = 'Parameters for seq-FISH cell segmentation';
 dims = [1 35];
@@ -20,10 +21,11 @@ if isfield(Parameters,'Minimal_spot_cells')
          num2str(Parameters.T), ...
          num2str(Parameters.Graph_Threshold_overlap), ...
          num2str(Parameters.Bandwidth_parameter), ...
-         return_boolean_text(Parameters.Perform_on_filtered_spots)
-     };
+         return_boolean_text(Parameters.Perform_on_filtered_spots), ...
+         return_boolean_text(Parameters.Remove_overlaping_cells)...
+         };
 else
-    definput = {'20','10','30','30','0.3','15','true'};
+    definput = {'20','10','30','30','0.3','15','true','false'};
 end
 
 answer = inputdlg(prompt,dlgtitle,dims,definput);
@@ -37,7 +39,7 @@ if ~ isempty(answer)
     Parameters.Graph_Threshold_overlap = str2num(answer{5}) ;
     Parameters.Bandwidth_parameter = str2num(answer{6});
     Parameters.Perform_on_filtered_spots = strcmp(answer{7},'true');
-    
+    Parameters.Remove_overlaping_cells = strcmp(answer{8},'true');
 else
     disp('Parameter definition canceled')
     Parameters = {};

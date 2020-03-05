@@ -50,14 +50,6 @@ end
 %%Getting size of images
 %%We need to know what is the size of the pictures : just load one
 %%picture...
-Round_directory = strcat(Parameters.Image_directory,"/Round_1/");
-Round_directory = char(Round_directory);
-Position_directory = strcat(Round_directory,"/Position_1/");
-Position_directory = char(Position_directory);
-Example_data=LoadImage(Position_directory,true,1); 
-X_size = size(Example_data,1);
-Y_size = size(Example_data,2);
-
 
 %%%First step : let's create the field in the Analysis_result object as well
 %%%as the corresponding array 
@@ -72,6 +64,7 @@ for P=1:Parameters.N_position
     Analysis_result.Fluo_analysis{P} = zeros(N_cells_temp,N_RNA_channel);
     
 end
+
 
 %%Second step : creating the binary connected component corresponding for
 %%each cell across each position

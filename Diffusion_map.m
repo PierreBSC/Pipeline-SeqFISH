@@ -5,8 +5,8 @@ function [Final_clusters] = Diffusion_map(Spot_position,N_neighbors,N_comp,T)
 %   diffusion map analysis
 
 if nargin < 4
-    N_neighbors = 20; %%Number of neighbors used for the Mutual nearest neighbors graph
-    N_comp = 30; %Number of eigenvalues to compute, reduce if too slow and increase if too many cells
+    N_neighbors = 10; %%Number of neighbors used for the Mutual nearest neighbors graph
+    N_comp = 50; %Number of eigenvalues to compute, reduce if too slow and increase if too many cells
     T = 15;
 end
 
@@ -34,7 +34,9 @@ M = inv(D) *  L ;
 %number
 N_comp = min(N_comp,size(Spot_position,1));
 
-[psi lambda_vector]= eigs(M,N_comp,'largestabs');
+
+[psi lambda_vector]= eigs(sparse(double(M)),N_comp,'largestabs');
+
 lambda_vector = diag(lambda_vector);
 Lambda_change = lambda_vector(1:(size(lambda_vector,1)-1)) ./ lambda_vector(2:(size(lambda_vector,1)));
 
@@ -43,5 +45,5 @@ N_eigen_values = N_eigen_values ;
 Psi_normalised = psi(:,1:N_eigen_values);
 Psi_normalised = arrayfun(@(x) x/sqrt(sum(x.^2)),Psi_normalised);
 Psi_normalised = Psi_normalised .* transpose(lambda_vector(1:N_eigen_values).^T);
-Final_clusters = kmeans(Psi_normalised,N_eigen_values,'Replicates',20);
+Final_clusters = kmeans(Psi_normalised,N_eigen_values,'Replicates',50);
  end
