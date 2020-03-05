@@ -174,5 +174,29 @@ Those informations are :
 3. Mean DAPI staining intensity. 
 4. Total number of RNA spots detected in that cell.
 
+This table will also be saved in the ouput directory as previously described.
 
-This table will also be saved in the ouput directory as 
+Performing analysis on overlapping positions  
+-----------------------------------------------
+
+Usually the different imaged positions are partially overlapping and can be stitched into one large picture. ASAP is able to compute the set of translation vectors needed to align the different pictures and then use them to create a global map of gene expression. To do so it uses an in-house implementation of the phase correlation alignment method that relies on Fast Fourrier Transform (FFT) to increase computational speed.
+
+To compute the set of stitching vectors simply type :
+
+```matlab
+Analysis_result = Compute_global_stitching(Analysis_result,Parameters,1,2);
+```
+Here the third and fourth specifies the Round and Channel used to compute the stitching vectors (here the first Round and second Channel).
+
+The results can be viewed using :
+
+```matlab
+Stitching_visualisation(Analysis_result,Parameters,1,2);
+```
+The estimated transformation can now be applied to the spot location and will create a new **result** object :
+
+```matlab
+Global_analysis_results = Compute_global_point_position(Analysis_result,Parameters);
+```
+
+
