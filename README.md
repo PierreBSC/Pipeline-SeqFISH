@@ -82,7 +82,7 @@ Let's say you want to look at the spots detection analysis performed on a given 
 Analysis_result = Spot_visualisation(Analysis_result,Parameters,2,1,4);
 ```
 This command will project the position of the identified spots on a mean z-stack intensity projection allowing to evaluate the sensitivity and specificity of the spot detection method.
-In the example given, the spots and image come from position 2, round 1 and channel 4, as specified in the function.
+In the example given, the spots and image come from Position two, Round one and Channel four, as specified in the function.
 
 <img src="Screenshots/Example_good_spot_detection.png" alt="Example_good_spot_detection.png" width="300">
 
@@ -91,7 +91,7 @@ When using this function, spots that passed  the spatial filtering step are repr
 If the analysis did not perform well you can simply change the parameters by accessing the different fields of the **Parameters** object. For instance if you want to increase the treshold offset used in the Multiscale algorithm to 0.1  and relaunch the analysis simply write :
 
 ```matlab
-Parameters.T_offset= 0.1;
+Parameters.sigma_small = 0.1;
 Analysis_result = Spot_detection(Analysis_result,Parameters);
 ```
 
